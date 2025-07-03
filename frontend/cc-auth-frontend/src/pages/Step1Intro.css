@@ -1,0 +1,14 @@
+.center-content {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100vw;
+    padding: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background: #fff;
+    color: #111;
+}

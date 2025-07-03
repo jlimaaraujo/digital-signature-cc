@@ -1,0 +1,139 @@
+.center-content {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Container para o visualizador de PDF */
+.pdf-viewer-container {
+    height: 700px;
+    overflow: auto;
+    background-color: #f3f4f6;
+    padding: 1rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    border: 2px solid #d1d5db;
+    border-top: none;
+    /* Scroll suave */
+    scroll-behavior: smooth;
+    /* Configuração de scroll para melhor experiência */
+    scrollbar-width: thin;
+}
+
+/* Personalizar scrollbar no webkit (Chrome, Safari, Edge) */
+.pdf-viewer-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.pdf-viewer-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.pdf-viewer-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.pdf-viewer-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Container interno que centraliza o PDF */
+.pdf-content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+/* Wrapper do documento PDF */
+.pdf-document-wrapper {
+    background: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+    margin: auto;
+}
+
+/* Estilos para o react-pdf */
+.react-pdf__Document {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.react-pdf__Page {
+    margin: 0;
+    display: block;
+}
+
+.react-pdf__Page__canvas {
+    display: block;
+    max-width: none !important;
+    height: auto !important;
+}
+
+/* Loading e erro states */
+.pdf-loading-container,
+.pdf-error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    width: 400px;
+    text-align: center;
+}
+
+.pdf-error-container {
+    color: #ef4444;
+}
+
+/* Animação do spinner */
+.pdf-loading-spinner {
+    animation: spin 1s linear infinite;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    border-top: 2px solid #6b7280;
+    height: 2rem;
+    width: 2rem;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modal overlay - garantir que fica por cima de tudo */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+}
+
+.modal-content {
+    background: white !important;
+    border-radius: 0.5rem !important;
+    padding: 2rem !important;
+    max-width: 28rem !important;
+    width: 100% !important;
+    margin: 0 1rem !important;
+    text-align: center !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    position: relative !important;
+    z-index: 10000 !important;
+}

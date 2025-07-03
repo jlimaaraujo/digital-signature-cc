@@ -1,0 +1,152 @@
+.center-content {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* Animation for success/error states */
+.bg-green-100,
+.bg-red-100 {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Success animations */
+.text-green-600 {
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.bg-green-50 {
+    animation: slideIn 0.4s ease-out 0.4s both;
+}
+
+.bg-blue-50 {
+    animation: slideIn 0.4s ease-out 0.6s both;
+}
+
+/* Button animations */
+.flex.flex-col.gap-4 > * {
+    animation: fadeInUp 0.4s ease-out 0.8s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:not(:disabled):active {
+    transform: translateY(0);
+}
+
+/* Download button special styling */
+.bg-green-600 {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+
+.bg-green-600:hover {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .center-content {
+        padding: 0.5rem;
+    }
+    
+    .center-content > div {
+        padding: 2rem 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .flex.gap-4 {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .flex.gap-4 button {
+        width: 100%;
+    }
+    
+    .flex.flex-col.gap-4 {
+        gap: 1rem;
+    }
+}
+
+/* Document info styling */
+.bg-green-50 svg {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Focus styles for accessibility */
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Success checkmarks animation */
+.bg-green-50 p:has-text("✓") {
+    animation: checkmarkSlide 0.3s ease-out;
+}
+
+@keyframes checkmarkSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
