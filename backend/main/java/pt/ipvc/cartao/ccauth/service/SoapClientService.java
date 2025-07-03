@@ -11,8 +11,8 @@ import java.util.Base64;
 public class SoapClientService {
 
     private static final String WSDL_URL = "https://preprod.cmd.autenticacao.gov.pt/Ama.Authentication.Frontend/SCMDService.svc";
-    private static final String USERNAME = "KzMry3YB";  // trocar por real
-    private static final String PASSWORD = "aWaSkfqbCOn6upI5FAMK";  // trocar por real
+    private static final String USERNAME = "KzMry3YB";
+    private static final String PASSWORD = "aWaSkfqbCOn6upI5FAMK";
 
     private static SCMDService port;
 

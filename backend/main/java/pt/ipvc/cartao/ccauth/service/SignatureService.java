@@ -79,9 +79,10 @@ public class SignatureService {
     }
 
     public SignResult validateOtp(OtpRequest request) {
-        // Por enquanto gera ambos (comportamento atual)
-        // Futuramente pode ser alterado conforme necessário
-        return validateOtpWithChoice(request, SignatureType.BOTH);
+        SignatureType signatureType = request.isHasVisualSignature() ?
+                SignatureType.WITH_VISUAL : SignatureType.WITHOUT_VISUAL;
+
+        return validateOtpWithChoice(request, signatureType);
     }
 
     public SignResult validateOtpWithoutVisual(OtpRequest request) {
