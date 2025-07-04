@@ -1,14 +1,27 @@
-.center-content {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+h2{
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0077b6; 
+    margin-bottom: 1.5rem; /
+}
+
+.requirements-list {
+    list-style-position: inside;
+    padding-left: 0;
+    text-align: left;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 100vw;
-    padding: 20px;
     margin: 0 auto;
-    box-sizing: border-box;
-    background: #fff;
-    color: #111;
+}
+
+.requirements-list li {
+    margin-left: 0;
+    padding-left: 0.5em;
+}
+
+.intro-text {
+    text-align: left;
+}
+
+button {
+    margin: 2rem;
 }

@@ -1,8 +1,8 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: none;
+  margin: 0;
   text-align: center;
+  width: 100%;
 }
 
 .logo {
@@ -39,4 +39,116 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.header {
+  background-color: #0077B6;
+  color: white;
+  padding: 3rem;
+  text-align: center;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.h1-header {
+  font-weight: normal;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.footer {
+  color: black;
+  padding: 1.5rem;
+  text-align: center;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+.stepper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem;
+  margin-top: 4rem;
+}
+
+.stepper-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stepper-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1rem;
+  color: #4a4a4a;
+  font-size: 0.875rem;
+}
+
+.stepper-item.active {
+  color: #0077B6;
+  font-weight: bold;
+}
+
+.stepper-item.completed {
+  color: #01a643;
+  font-weight: bold;
+}
+
+.stepper-item::before {
+  content: '';
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  margin-bottom: 0.5rem;
+}
+
+.stepper-item.active::before {
+  background-color: #0077B6;
+}
+
+.stepper-item.completed::before {
+  background-color: #01a643;
 }

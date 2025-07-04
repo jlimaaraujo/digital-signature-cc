@@ -11,6 +11,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  overflow: hidden;
 }
 
 a {
@@ -24,23 +26,21 @@ a:hover {
 
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: #fff;
   color: #111;
+  width: 100%;
 }
 
 #root {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100vw;
   background: #fff;
   color: #111;
+  margin: 0;
+  padding: 0;
 }
 
 h1 {
@@ -55,12 +55,14 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #0077B6;
   cursor: pointer;
   transition: border-color 0.25s;
+  color: #fff;
+  margin: 0.3em;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #CAF0F8;
 }
 button:focus,
 button:focus-visible {
