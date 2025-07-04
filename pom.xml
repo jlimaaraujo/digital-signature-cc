@@ -154,7 +154,7 @@
                                 <wsdlUrl>https://preprod.cmd.autenticacao.gov.pt/Ama.Authentication.Frontend/SCMDService.svc?wsdl</wsdlUrl>
                             </wsdlUrls>
                             <packageName>pt.ipvc.cartao.ccauth.soap</packageName>
-                            <sourceDestDir>backend/main/java</sourceDestDir>
+                            <sourceDestDir>src/main/java</sourceDestDir>
                         </configuration>
                     </execution>
                 </executions>

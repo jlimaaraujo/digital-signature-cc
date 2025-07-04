@@ -32,5 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-backend/main/resources/output
-backend/main/resources/cifra.cer
+src/main/resources/output

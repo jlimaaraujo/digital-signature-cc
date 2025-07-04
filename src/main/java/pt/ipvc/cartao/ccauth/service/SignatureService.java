@@ -25,7 +25,7 @@ import java.util.Base64;
 public class SignatureService {
 
     private static final String APPLICATION_ID = "882ec3e2-97c4-4abc-bb6c-5f9a59fbbf39";
-    private static final String CERT_PATH = "cifra.cer";
+    private static final String CERT_PATH = "cifra/cifra.cer";
 
     private String processId;
     private byte[] lastHash;
