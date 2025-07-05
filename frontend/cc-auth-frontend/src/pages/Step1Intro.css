@@ -25,3 +25,19 @@ h2{
 button {
     margin: 2rem;
 }
+
+button:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 4px #f3f4f6; /* azul claro para acessibilidade */
+}
+
+button:active {
+    outline: none !important;
+    box-shadow: 0 0 0 4px #fff; /* azul mais escuro ao clicar */
+}
+
+.sr-only {
+    margin-top: 2rem;
+    text-align: left;
+    font-weight: bold;
+}

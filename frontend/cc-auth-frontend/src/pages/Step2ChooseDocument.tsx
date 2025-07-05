@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Step2EscolhaDocumento.css';
+import './Step2ChooseDocument.css';
 
 export default function Step2EscolhaDocumento() {
     const navigate = useNavigate();

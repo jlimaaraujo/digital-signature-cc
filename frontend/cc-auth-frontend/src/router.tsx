@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import Step1Intro from './pages/Step1Intro';
-import Step2EscolhaDocumento from './pages/Step2EscolhaDocumento';
+import Step2EscolhaDocumento from './pages/Step2ChooseDocument';
 import Step3Preview from './pages/Step3Preview';
 import Step3Details from './pages/Step3Details';
 import Step4Signature from './pages/Step4Signature';
