@@ -28,12 +28,12 @@ button {
 
 button:focus {
     outline: none !important;
-    box-shadow: 0 0 0 4px #f3f4f6; /* azul claro para acessibilidade */
+    box-shadow: 0 0 0 4px #f3f4f6; 
 }
 
 button:active {
     outline: none !important;
-    box-shadow: 0 0 0 4px #fff; /* azul mais escuro ao clicar */
+    box-shadow: 0 0 0 4px #fff; 
 }
 
 .sr-only {
