@@ -1,5 +1,5 @@
 .center-content {
-    min-height: 100vh;
+    min-height: 0 !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,14 +8,14 @@
 
 /* Container para o visualizador de PDF */
 .pdf-viewer-container {
-    height: 700px;
+    height: 200px;
     overflow: auto;
     background-color: #f3f4f6;
     padding: 1rem;
     border-bottom-left-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
     border: 2px solid #d1d5db;
-    border-top: none;
+    border-top: 2px solid #d1d5db;
     /* Scroll suave */
     scroll-behavior: smooth;
     /* Configuração de scroll para melhor experiência */

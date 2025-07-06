@@ -70,13 +70,13 @@ export default function Step3Preview() {
                                     <span className="text-lg font-medium">{documentInfo.name}</span>
                                 </div>
                                 
-                                {/* Controles centralizados */}
+                                {/* Controlos centralizados */}
                                 <div className="flex items-center justify-center space-x-6">
-                                    {/* Controles de zoom */}
+                                    {/* Controlos de zoom */}
                                     <div className="flex items-center space-x-2">
                                         <button
-                                            onClick={() => setScale(prev => Math.max(0.5, prev - 0.25))}
-                                            className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
+                                            onClick={() => setScale(prev => Math.max(1, prev - 0.25))}
+                                            className="w-4 h-4 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
                                             title="Diminuir zoom"
                                         >
                                             -
@@ -85,7 +85,7 @@ export default function Step3Preview() {
                                             {Math.round(scale * 100)}%
                                         </span>
                                         <button
-                                            onClick={() => setScale(prev => Math.min(5.0, prev + 0.25))}
+                                            onClick={() => setScale(prev => Math.min(2.0, prev + 0.25))}
                                             className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
                                             title="Aumentar zoom"
                                         >
