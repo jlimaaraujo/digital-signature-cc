@@ -40,7 +40,7 @@ export default function Step4Signature() {
     }, []);
 
     const handleBack = () => {
-        navigate('/step3details');
+        navigate('/step4');
     };
 
 

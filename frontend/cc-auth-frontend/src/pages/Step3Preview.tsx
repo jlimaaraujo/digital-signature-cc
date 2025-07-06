@@ -41,7 +41,7 @@ export default function Step3Preview() {
 
     const handleNext = () => {
         // Navegar diretamente para a próxima etapa
-        navigate('/step3details');
+        navigate('/step4');
     };
 
     const handleBack = () => {

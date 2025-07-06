@@ -14,7 +14,7 @@ export default function Step3Details() {
         // Guardar a opção no localStorage
         localStorage.setItem('showVisualSignature', JSON.stringify(showVisualSignature));
         // Navegar para o Step4
-        navigate('/step4');
+        navigate('/step5');
     };
 
     return (
