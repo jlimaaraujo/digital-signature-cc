@@ -287,7 +287,7 @@ export default function Step5OTP() {
                         {isLoading ? (
                             <>
                                 <div className="loading-spinner mr-2"></div>
-                                VALIDANDO...
+                                A VALIDAR...
                             </>
                         ) : (
                             'VALIDAR CÓDIGO'

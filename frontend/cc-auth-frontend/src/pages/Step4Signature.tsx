@@ -57,12 +57,13 @@ export default function Step4Signature() {
     const handleSign = async () => {
         if (!phoneNumber || !pin) {
             setError('Por favor, preencha todos os campos');
+            //window.alert('É obrigatório preencher todos os campos!');
             return;
         }
 
         // Remove espaços para validar apenas os dígitos
         const phoneDigits = phoneNumber.replace(/\s/g, '');
-        const formattedPhone = "+351" + phoneDigits; // Adicionar prefixo país
+        const formattedPhone = "+351" + phoneDigits; 
         if (phoneDigits.length !== 9) {
             setError('O número de telemóvel deve ter 9 dígitos');
             return;
@@ -202,53 +203,50 @@ export default function Step4Signature() {
                     Assinatura Digital
                 </h2>
 
-                <p className="text-gray-700 mb-8 text-lg leading-relaxed text-center">
-                    Para assinar o documento digitalmente, introduza os seus dados da Chave Móvel Digital.
-                </p>
-
                 {/* Informação do documento */}
                 {documentInfo && (
                     <div className="w-full mb-8 p-4 bg-gray-50 rounded-lg border">
                         <div className="flex items-center">
                             <div>
-                                <p className="font-semibold text-gray-800">{documentInfo.name}</p>
-                                <p className="text-sm text-gray-500">Documento a assinar</p>
+                                <p className="text-sm text-gray-500"><b>Documento a assinar: </b>{documentInfo.name}</p>
                             </div>
                         </div>
                     </div>
                 )}
+                <p className="text-gray-700 mb-8 text-lg leading-relaxed text-center">
+                    Para assinar o documento digitalmente, introduza os seus dados da Chave Móvel Digital.
+                </p>
 
                 {/* Formulário de assinatura */}
-                <div className="w-full space-y-6">
+                <div className="forms w-full space-y-6">
                     {/* Número de telemóvel */}
-                    <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                            Número de Telemóvel
+                    <div className="flex items-center gap-4">
+                        <label htmlFor="phone" className="label-phone text-sm font-medium text-gray-700 whitespace-nowrap">
+                            Nº de telemóvel:
                         </label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                <span className="text-gray-500 text-sm">+351</span>
-                            </div>
-                            <input
-                                type="tel"
-                                id="phone"
-                                value={phoneNumber}
-                                onChange={handlePhoneChange}
-                                placeholder="9XX XXX XXX"
-                                className="w-full pl-16 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                                disabled={isLoading}
-                            />
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <span className="text-xs text-gray-500">
                             Introduza o número associado à sua Chave Móvel Digital
-                        </p>
+                        </span>
+                        <input
+                            type="tel"
+                            id="phone"
+                            value={phoneNumber}
+                            onChange={handlePhoneChange}
+                            placeholder="9XX XXX XXX"
+                            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
+                            style={{width: '180px'}}
+                            disabled={isLoading}
+                        />
                     </div>
 
                     {/* PIN */}
-                    <div>
-                        <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
-                            PIN da Chave Móvel Digital
+                    <div className="flex items-center gap-4">
+                        <label htmlFor="pin" className="label-pin text-sm font-medium text-gray-700 whitespace-nowrap">
+                            PIN:
                         </label>
+                        <span className="text-xs text-gray-500">
+                            PIN de 4 a 6 dígitos da sua Chave Móvel Digital
+                        </span>
                         <input
                             type="password"
                             id="pin"
@@ -256,21 +254,17 @@ export default function Step4Signature() {
                             onChange={handlePinChange}
                             placeholder="••••••"
                             maxLength={6}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-center tracking-widest"
+                            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-center tracking-widest"
+                            style={{width: '180px'}}
                             disabled={isLoading}
                         />
-                        <p className="text-xs text-gray-500 mt-1">
-                            PIN de 4 a 6 dígitos da sua Chave Móvel Digital
-                        </p>
                     </div>
                 </div>
 
                 {/* Mensagem de erro */}
                 {error && (
-                    <div className="w-full mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <div className="flex items-center">
-                            <p className="text-red-700 text-sm">{error}</p>
-                        </div>
+                    <div className="w-full mt-6 flex justify-center">
+                        <p style={{ color: '#dc2626', fontWeight: 'bold', fontSize: '1rem', textAlign: 'center' }}>{error}</p>
                     </div>
                 )}
 
@@ -278,7 +272,6 @@ export default function Step4Signature() {
                 <div className="w-full mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-start">
                         <div>
-                            <p className="text-blue-800 text-sm font-medium mb-1">Próximo Passo</p>
                             <p className="text-blue-700 text-xs leading-relaxed">
                                 Após clicar em "Assinar Documento", será enviado um código OTP por SMS 
                                 para o seu número de telemóvel para validar a assinatura.
@@ -300,13 +293,13 @@ export default function Step4Signature() {
                     </button>
                     <button
                         onClick={handleSign}
-                        disabled={isLoading || !phoneNumber || !pin}
+                        disabled={isLoading}
                         className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-8 rounded-md transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
                     >
                         {isLoading ? (
                             <>
                                 <div className="loading-spinner mr-2"></div>
-                                ASSINANDO E ENVIANDO OTP...
+                                A ASSINAR E A ENVIAR OTP...
                             </>
                         ) : (
                             'ASSINAR DOCUMENTO'
