@@ -1,14 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { FaRegEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 import './Step4Signature.css';
 
 export default function Step4Signature() {
     const navigate = useNavigate();
-    const [documentInfo, setDocumentInfo] = useState<any>(null);
+    const [setDocumentInfo] = useState<any>(null);
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [pin, setPin] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [showPin, setShowPin] = useState<boolean>(false);
 
     useEffect(() => {
         // Recuperar informações do documento do localStorage
@@ -51,8 +54,6 @@ export default function Step4Signature() {
     const handleBack = () => {
         navigate('/step4');
     };
-
-
 
     const handleSign = async () => {
         if (!phoneNumber || !pin) {
@@ -151,6 +152,11 @@ export default function Step4Signature() {
                 throw new Error(errorMessage);
             }
             
+            // Guardar o processId retornado para uso posterior
+            const processId = await signResponse.text();
+            localStorage.setItem('processId', processId);
+            console.log('ProcessId salvo:', processId);
+            
             // Navegar para a próxima etapa (validação OTP)
             navigate('/step6');
         } catch (error) {
@@ -196,6 +202,10 @@ export default function Step4Signature() {
         if (error) setError('');
     };
 
+    const togglePinVisibility = () => {
+        setShowPin(!showPin);
+    };
+
     return (
         <div className="center-content">
             <div className="rounded-lg shadow-md p-12 max-w-2xl flex flex-col items-center">
@@ -203,16 +213,6 @@ export default function Step4Signature() {
                     Assinatura Digital
                 </h2>
 
-                {/* Informação do documento */}
-                {documentInfo && (
-                    <div className="w-full mb-8 p-4 bg-gray-50 rounded-lg border">
-                        <div className="flex items-center">
-                            <div>
-                                <p className="text-sm text-gray-500"><b>Documento a assinar: </b>{documentInfo.name}</p>
-                            </div>
-                        </div>
-                    </div>
-                )}
                 <p className="text-gray-700 mb-8 text-lg leading-relaxed text-center">
                     Para assinar o documento digitalmente, introduza os seus dados da Chave Móvel Digital.
                 </p>
@@ -222,7 +222,7 @@ export default function Step4Signature() {
                     {/* Número de telemóvel */}
                     <div className="flex items-center gap-4">
                         <label htmlFor="phone" className="label-phone text-sm font-medium text-gray-700 whitespace-nowrap">
-                            Nº de telemóvel:
+                            <b>Nº de telemóvel:</b>
                         </label>
                         <span className="text-xs text-gray-500">
                             Introduza o número associado à sua Chave Móvel Digital
@@ -242,22 +242,32 @@ export default function Step4Signature() {
                     {/* PIN */}
                     <div className="flex items-center gap-4">
                         <label htmlFor="pin" className="label-pin text-sm font-medium text-gray-700 whitespace-nowrap">
-                            PIN:
+                            <b>PIN:</b>
                         </label>
                         <span className="text-xs text-gray-500">
                             PIN de 4 a 6 dígitos da sua Chave Móvel Digital
                         </span>
-                        <input
-                            type="password"
-                            id="pin"
-                            value={pin}
-                            onChange={handlePinChange}
-                            placeholder="••••••"
-                            maxLength={6}
-                            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-center tracking-widest"
-                            style={{width: '180px'}}
-                            disabled={isLoading}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPin ? "text" : "password"}
+                                id="pin"
+                                value={pin}
+                                onChange={handlePinChange}
+                                placeholder="••••••"
+                                maxLength={6}
+                                className="px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-center tracking-widest"
+                                style={{width: '180px'}}
+                                disabled={isLoading}
+                            />
+                            <button
+                                type="button"
+                                onClick={togglePinVisibility}
+                                className="toggle-visibility absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                disabled={isLoading}
+                            >
+                                {showPin ? <FaEyeSlash size={18} /> : <FaRegEye size={18} />}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -279,8 +289,6 @@ export default function Step4Signature() {
                         </div>
                     </div>
                 </div>
-
-
 
                 {/* Botões de navegação */}
                 <div className="flex gap-4 mt-8">
