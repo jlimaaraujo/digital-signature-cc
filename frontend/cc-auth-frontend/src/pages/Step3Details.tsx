@@ -26,18 +26,50 @@ export default function Step3Details() {
         if (documentData) {
             try {
                 const parsedData = JSON.parse(documentData);
+                console.log('Document info loaded:', parsedData);
                 setDocumentInfo(parsedData);
             } catch (error) {
                 console.error('Erro ao carregar documento:', error);
             }
+        } else {
+            console.warn('Nenhuma informação de documento encontrada no localStorage');
+        }
+
+        // Só recuperar configurações de assinatura se estivermos voltando da página seguinte
+        // (verificar se há dados salvos de telefone, indicando que já passou pelo Step4)
+        const phoneNumber = localStorage.getItem('phoneNumber');
+        if (phoneNumber) {
+            // Usuario está voltando, carregar configurações salvas
+            const savedSignatureConfig = localStorage.getItem('signatureConfig');
+            if (savedSignatureConfig) {
+                try {
+                    const config = JSON.parse(savedSignatureConfig);
+                    setShowVisualSignature(config.showVisualSignature || false);
+                    setSelectedPage(config.page || 1);
+                    if (config.position) {
+                        setSignaturePosition({
+                            x: config.position.xPercent || 30,
+                            y: config.position.yPercent || 11
+                        });
+                    }
+                } catch (error) {
+                    console.error('Erro ao carregar configurações de assinatura:', error);
+                }
+            }
+        } else {
+            setShowVisualSignature(false);
+            setSelectedPage(1);
+            setSignaturePosition({ x: 30, y: 11 });
         }
     }, []);
 
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+        console.log('PDF carregado com sucesso. Número de páginas:', numPages);
         setNumPages(numPages);
     };
 
     const onPageLoadSuccess = (page: any) => {
+        console.log('Página carregada com sucesso:', selectedPage);
         const { width, height } = page.getViewport({ scale: 1 });
         setPageWidth(width);
         setPageHeight(height);
@@ -99,6 +131,12 @@ export default function Step3Details() {
     }, [isDragging]);
 
     const handleBack = () => {
+        // Limpar configurações de assinatura para não interferir na próxima vez
+        localStorage.removeItem('signatureConfig');
+        localStorage.removeItem('hasVisualSignature');
+        localStorage.removeItem('signaturePage');
+        localStorage.removeItem('signatureXPercent');
+        localStorage.removeItem('signatureYPercent');
         navigate('/step3');
     };
 
@@ -149,14 +187,27 @@ export default function Step3Details() {
                                 <Document
                                     file={documentInfo.fileData}
                                     onLoadSuccess={onDocumentLoadSuccess}
+                                    onLoadError={(error) => {
+                                        console.error('Erro ao carregar PDF:', error);
+                                    }}
                                     loading={
                                         <div className="flex items-center justify-center h-full">
                                             <div className="loading-spinner"></div>
+                                            <p className="ml-2">A carregar documento...</p>
                                         </div>
                                     }
                                     error={
-                                        <div className="flex items-center justify-center h-full text-red-500">
-                                            <p>Erro ao carregar PDF</p>
+                                        <div className="flex flex-col items-center justify-center h-full text-red-500 p-4">
+                                            <p className="text-center mb-2">Erro ao carregar PDF</p>
+                                            <p className="text-sm text-gray-600 text-center">
+                                                Verifique se o documento foi carregado corretamente
+                                            </p>
+                                            <button 
+                                                onClick={() => window.location.reload()} 
+                                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                            >
+                                                Recarregar página
+                                            </button>
                                         </div>
                                     }
                                 >
@@ -187,10 +238,18 @@ export default function Step3Details() {
                                 )}
                             </div>
                         ) : (
-                            <div className="flex items-center justify-center h-full text-gray-500">
-                                <p className="text-center px-4">
-                                    A carregar documento...
+                            <div className="flex flex-col items-center justify-center h-full text-gray-500 p-4">
+                                <p className="text-center px-4 mb-4">
+                                    {documentInfo ? 'A carregar documento...' : 'Nenhum documento encontrado'}
                                 </p>
+                                {!documentInfo && (
+                                    <button 
+                                        onClick={() => navigate('/step3')} 
+                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    >
+                                        Voltar para selecionar documento
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>

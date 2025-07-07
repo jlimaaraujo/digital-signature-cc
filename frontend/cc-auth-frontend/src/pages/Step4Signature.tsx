@@ -22,25 +22,34 @@ export default function Step4Signature() {
             }
         }
 
-        // Recuperar opção de assinatura visual
-        const visualSignatureOption = localStorage.getItem('showVisualSignature');
-        if (visualSignatureOption) {
+        // Recuperar configurações de assinatura do localStorage
+        const signatureConfigData = localStorage.getItem('signatureConfig');
+        if (signatureConfigData) {
             try {
-                const hasVisualSignature = JSON.parse(visualSignatureOption);
+                const signatureConfig = JSON.parse(signatureConfigData);
                 // Guardar para uso posterior no Step5
-                localStorage.setItem('hasVisualSignature', JSON.stringify(hasVisualSignature));
+                localStorage.setItem('hasVisualSignature', JSON.stringify(signatureConfig.showVisualSignature || false));
+                localStorage.setItem('signaturePage', JSON.stringify(signatureConfig.page || 1));
+                localStorage.setItem('signatureXPercent', JSON.stringify(signatureConfig.position?.xPercent || 50));
+                localStorage.setItem('signatureYPercent', JSON.stringify(signatureConfig.position?.yPercent || 50));
             } catch (error) {
-                // Se não conseguir fazer parse, usar valor padrão (false)
+                // Se não conseguir fazer parse, usar valores padrão
                 localStorage.setItem('hasVisualSignature', JSON.stringify(false));
+                localStorage.setItem('signaturePage', JSON.stringify(1));
+                localStorage.setItem('signatureXPercent', JSON.stringify(50));
+                localStorage.setItem('signatureYPercent', JSON.stringify(50));
             }
         } else {
-            // Se não houver opção salva, usar valor padrão (false)
+            // Se não houver configuração salva, usar valores padrão
             localStorage.setItem('hasVisualSignature', JSON.stringify(false));
+            localStorage.setItem('signaturePage', JSON.stringify(1));
+            localStorage.setItem('signatureXPercent', JSON.stringify(50));
+            localStorage.setItem('signatureYPercent', JSON.stringify(50));
         }
     }, []);
 
     const handleBack = () => {
-        navigate('/step3details');
+        navigate('/step4');
     };
 
 
@@ -72,9 +81,17 @@ export default function Step4Signature() {
             localStorage.setItem('phoneNumber', phoneDigits);
             localStorage.setItem('userPin', pin);
             
-            // Recuperar a opção de assinatura visual
-            const showVisualSignature = localStorage.getItem('showVisualSignature');
-            const hasVisualSignature = showVisualSignature ? JSON.parse(showVisualSignature) : false;
+            // Recuperar a configuração de assinatura completa
+            const signatureConfigData = localStorage.getItem('signatureConfig');
+            let hasVisualSignature = false;
+            if (signatureConfigData) {
+                try {
+                    const signatureConfig = JSON.parse(signatureConfigData);
+                    hasVisualSignature = signatureConfig.showVisualSignature || false;
+                } catch (error) {
+                    console.error('Erro ao carregar configuração de assinatura:', error);
+                }
+            }
             localStorage.setItem('hasVisualSignature', JSON.stringify(hasVisualSignature));
 
             // 1. Chamar endpoint para obter certificado

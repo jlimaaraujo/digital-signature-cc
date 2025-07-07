@@ -79,10 +79,88 @@ public class SignatureService {
     }
 
     public SignResult validateOtp(OtpRequest request) {
-        SignatureType signatureType = request.isHasVisualSignature() ?
-                SignatureType.WITH_VISUAL : SignatureType.WITHOUT_VISUAL;
+        try {
+            String encryptedOtp = CryptoUtils.encrypt(request.getOtp(), CERT_PATH);
+            SignResult result = SoapClientService.validateOtp(encryptedOtp, this.processId, APPLICATION_ID.getBytes());
 
-        return validateOtpWithChoice(request, signatureType);
+            String certificateToUse = this.lastCertificate;
+            if (certificateToUse == null) {
+                System.out.println("No certificate available");
+                return null;
+            }
+
+            byte[] decodedSignature = Base64.getDecoder().decode(result.getAssinaturaBase64());
+
+            if (request.isHasVisualSignature()) {
+                // Processar com assinatura visual posicionada
+                byte[] signedPdf = processSignedPdfWithPosition(
+                        this.originalPdfBytes,
+                        decodedSignature,
+                        certificateToUse,
+                        request.getSignaturePage(),
+                        request.getSignatureXPercent(),
+                        request.getSignatureYPercent()
+                );
+
+                if (signedPdf != null) {
+                    String savedPath = saveSignedPdf(signedPdf, "_positioned.pdf");
+                    System.out.println("PDF com assinatura posicionada: " + savedPath);
+                    result.setSignedPdfBytes(signedPdf);
+                }
+            } else {
+                // Processar sem assinatura visual
+                byte[] signedPdf = processSignedPdfWithoutVisual(
+                        this.originalPdfBytes,
+                        decodedSignature,
+                        certificateToUse
+                );
+
+                if (signedPdf != null) {
+                    String savedPath = saveSignedPdf(signedPdf, "_no_visual.pdf");
+                    System.out.println("PDF sem marca visual: " + savedPath);
+                    result.setSignedPdfBytes(signedPdf);
+                }
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            System.err.println("Erro na validação OTP: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private byte[] processSignedPdfWithPosition(byte[] pdfData, byte[] signature,
+                                                String certificate, int pageNumber,
+                                                float xPercent, float yPercent) {
+        try {
+            PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfData));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PdfWriter writer = new PdfWriter(outputStream);
+            PdfDocument pdfDoc = new PdfDocument(reader, writer);
+
+            // Add signature as metadata
+            String signatureBase64 = Base64.getEncoder().encodeToString(signature);
+            PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+            info.setMoreInfo("AssinaturaCMD", signatureBase64);
+
+            // Extract name and ID from certificate
+            String[] userData = extractUserDataFromCertificate(certificate);
+            String nome = userData[0];
+            String ccNumber = userData[1];
+
+            // Add visual signature at custom position
+            addVisualSignatureWithPosition(pdfDoc, nome, ccNumber, pageNumber, xPercent, yPercent);
+
+            pdfDoc.close();
+            return outputStream.toByteArray();
+
+        } catch (Exception e) {
+            System.err.println("Erro ao processar PDF com posição: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public SignResult validateOtpWithoutVisual(OtpRequest request) {
@@ -192,6 +270,83 @@ public class SignatureService {
             System.err.println("Erro ao processar PDF assinado: " + e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private void addVisualSignatureWithPosition(PdfDocument pdfDoc, String nome, String ccNumber,
+                                                int pageNumber, float xPercent, float yPercent) {
+        try {
+            Document document = new Document(pdfDoc);
+
+            // Obter as dimensões da página
+            float pageWidth = pdfDoc.getPage(pageNumber).getPageSize().getWidth();
+            float pageHeight = pdfDoc.getPage(pageNumber).getPageSize().getHeight();
+
+            // Dimensões da assinatura
+            float signatureWidth = 120;
+            float signatureHeight = 40;
+
+            // Converter percentagem para coordenadas absolutas
+            // Nota: No PDF, Y=0 está no fundo da página, então precisamos inverter
+            float xPos = (xPercent / 100) * pageWidth - (signatureWidth / 2);
+            float yPos = pageHeight - ((yPercent / 100) * pageHeight) - (signatureHeight / 2);
+
+            // Dimensões do logo
+            float logoW = 36;
+            float logoH = 36;
+            float logoX = xPos;
+            float logoY = yPos - 8;
+
+            // Adicionar logo com opacidade
+            try {
+                String logoPath = "src/main/resources/logo/CMD-assinatura-2.png";
+                java.nio.file.Path path = java.nio.file.Paths.get(logoPath);
+
+                if (java.nio.file.Files.exists(path)) {
+                    com.itextpdf.io.image.ImageData imageData =
+                            com.itextpdf.io.image.ImageDataFactory.create(logoPath);
+                    com.itextpdf.layout.element.Image logo =
+                            new com.itextpdf.layout.element.Image(imageData);
+
+                    logo.setWidth(logoW);
+                    logo.setHeight(logoH);
+                    logo.setFixedPosition(pageNumber, logoX, logoY);
+                    logo.setOpacity(0.15f);
+
+                    document.add(logo);
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao adicionar logo: " + e.getMessage());
+            }
+
+            // Adicionar texto da assinatura
+            String timestamp = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
+
+            // Configurar fonte menor
+            float fontSize = 6f;
+
+            // Texto completo da assinatura
+            Paragraph assinadoPor = new Paragraph("Assinado por: " + nome)
+                    .setFontSize(fontSize)
+                    .setFixedPosition(pageNumber, xPos, yPos + 24, signatureWidth);
+            document.add(assinadoPor);
+
+            Paragraph ccText = new Paragraph("Num. de Identificação: " + ccNumber)
+                    .setFontSize(fontSize)
+                    .setFixedPosition(pageNumber, xPos, yPos + 16, signatureWidth);
+            document.add(ccText);
+
+            Paragraph dataText = new Paragraph("Data: " + timestamp)
+                    .setFontSize(fontSize)
+                    .setFixedPosition(pageNumber, xPos, yPos + 8, signatureWidth);
+            document.add(dataText);
+
+            document.close();
+
+        } catch (Exception e) {
+            System.err.println("Erro ao adicionar assinatura visual: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

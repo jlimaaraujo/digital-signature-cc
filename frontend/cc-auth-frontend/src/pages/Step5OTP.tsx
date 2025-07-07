@@ -38,11 +38,41 @@ export default function Step5OTP() {
         setError('');
 
         try {
-            // Recuperar a opção de assinatura visual
+            // Recuperar todas as configurações de assinatura
             const hasVisualSignature = localStorage.getItem('hasVisualSignature');
             const showVisual = hasVisualSignature ? JSON.parse(hasVisualSignature) : false;
             
-            // Chamar o endpoint de validação OTP
+            // Recuperar informações de posição e página
+            const signaturePage = localStorage.getItem('signaturePage');
+            const signatureXPercent = localStorage.getItem('signatureXPercent');
+            const signatureYPercent = localStorage.getItem('signatureYPercent');
+            
+            const page = signaturePage ? JSON.parse(signaturePage) : 1;
+            const xPercent = signatureXPercent ? JSON.parse(signatureXPercent) : 50;
+            const yPercent = signatureYPercent ? JSON.parse(signatureYPercent) : 50;
+
+            // Recuperar nome do documento
+            const documentInfo = localStorage.getItem('documentInfo');
+            let documentName = 'Documento';
+            if (documentInfo) {
+                try {
+                    const parsedData = JSON.parse(documentInfo);
+                    documentName = parsedData.name || 'Documento';
+                } catch (error) {
+                    console.error('Erro ao carregar nome do documento:', error);
+                }
+            }
+            
+            console.log('Enviando dados para validação OTP:', {
+                otp: otpCode,
+                documentName: documentName,
+                hasVisualSignature: showVisual,
+                signaturePage: page,
+                signatureXPercent: xPercent,
+                signatureYPercent: yPercent
+            });
+            
+            // Chamar o endpoint de validação OTP com todos os dados necessários
             const response = await fetch('http://localhost:8080/api/signature/validate-otp', {
                 method: 'POST',
                 headers: {
@@ -50,7 +80,11 @@ export default function Step5OTP() {
                 },
                 body: JSON.stringify({
                     otp: otpCode,
-                    hasVisualSignature: showVisual
+                    documentName: documentName,
+                    hasVisualSignature: showVisual,
+                    signaturePage: page,
+                    signatureXPercent: xPercent,
+                    signatureYPercent: yPercent
                 }),
             });
 
