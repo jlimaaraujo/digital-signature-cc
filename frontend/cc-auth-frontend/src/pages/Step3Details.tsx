@@ -98,17 +98,27 @@ export default function Step3Details() {
         const markerWidth = markerRef.current.offsetWidth;
         const markerHeight = markerRef.current.offsetHeight;
 
-        // Calcular posição relativa ao container
-        let x = e.clientX - containerRect.left - markerWidth / 2;
-        let y = e.clientY - containerRect.top - markerHeight / 2;
+        // Calcular posição do mouse relativa ao container
+        const mouseX = e.clientX - containerRect.left;
+        const mouseY = e.clientY - containerRect.top;
 
-        // Limitar dentro dos bounds do container
-        x = Math.max(0, Math.min(x, containerRect.width - markerWidth));
-        y = Math.max(0, Math.min(y, containerRect.height - markerHeight));
+        // Calcular a posição do centro da marca (onde o mouse está)
+        let centerX = mouseX;
+        let centerY = mouseY;
 
-        // Converter para percentagem para ser responsivo
-        const xPercent = (x / containerRect.width) * 100;
-        const yPercent = (y / containerRect.height) * 100;
+        // Limitar a posição do centro considerando as dimensões da marca
+        // O centro não pode estar mais próximo da borda que metade da largura/altura da marca
+        const minX = markerWidth / 2;
+        const maxX = containerRect.width - markerWidth / 2;
+        const minY = markerHeight / 2;
+        const maxY = containerRect.height - markerHeight / 2;
+
+        centerX = Math.max(minX, Math.min(centerX, maxX));
+        centerY = Math.max(minY, Math.min(centerY, maxY));
+
+        // Converter para percentagem baseado na posição do centro
+        const xPercent = (centerX / containerRect.width) * 100;
+        const yPercent = (centerY / containerRect.height) * 100;
 
         setSignaturePosition({ x: xPercent, y: yPercent });
     };
