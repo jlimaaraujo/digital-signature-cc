@@ -57,7 +57,7 @@ export default function Step3Preview() {
                     </h2>
 
                     <p className="text-gray-700 mb-8 text-lg leading-relaxed">
-                        Verifique o documento que será assinado digitalmente.
+                        <b>Verifique o documento que será assinado digitalmente.</b>
                     </p>
 
                     {/* Informações do documento */}
@@ -66,45 +66,35 @@ export default function Step3Preview() {
                             {/* Cabeçalho do visualizador */}
                             <div className="bg-gray-800 text-white p-4 rounded-t-lg">
                                 {/* Nome do arquivo centralizado */}
-                                <div className="text-center mb-5">
+                                <div className="text-center mb-4">
                                     <span className="text-lg font-medium">{documentInfo.name}</span>
                                 </div>
                                 
-                                {/* Controlos centralizados */}
-                                <div className="flex items-center justify-center space-x-6">
-                                    {/* Controlos de zoom */}
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            onClick={() => setScale(prev => Math.max(1, prev - 0.25))}
-                                            className="w-4 h-4 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
-                                            title="Diminuir zoom"
-                                        >
-                                            -
-                                        </button>
-                                        <span className="text-sm font-medium min-w-[50px] text-center">
-                                            {Math.round(scale * 100)}%
-                                        </span>
-                                        <button
-                                            onClick={() => setScale(prev => Math.min(2.0, prev + 0.25))}
-                                            className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
-                                            title="Aumentar zoom"
-                                        >
-                                            +
-                                        </button>
-                                        
-                                        {/* Botões de zoom rápido */}
-                                        <div className="flex items-center space-x-1 ml-2">
-                                            
-                                        </div>
-                                    </div>
-                                    
-                                    {/* Navegação de páginas */}
+                                {/* Controlos todos numa linha horizontal */}
+                                <div className="flex items-center justify-center gap-4">
+                                    <button
+                                        onClick={() => setScale(prev => Math.max(1, prev - 0.25))}
+                                        className="control-button w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
+                                        title="Diminuir zoom"
+                                    >
+                                        -
+                                    </button>
+                                    <span className="text-sm font-medium min-w-[50px] text-center">
+                                        {Math.round(scale * 100)}%
+                                    </span>
+                                    <button
+                                        onClick={() => setScale(prev => Math.min(2.0, prev + 0.25))}
+                                        className="control-button w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm font-bold transition-colors"
+                                        title="Aumentar zoom"
+                                    >
+                                        +
+                                    </button>
                                     {numPages > 1 && (
-                                        <div className="flex items-center space-x-2">
+                                        <>
                                             <button
                                                 onClick={() => setPageNumber(prev => Math.max(1, prev - 1))}
                                                 disabled={pageNumber <= 1}
-                                                className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm disabled:opacity-50 transition-colors"
+                                                className="control-button w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm disabled:opacity-50 transition-colors"
                                             >
                                                 ◀
                                             </button>
@@ -114,11 +104,11 @@ export default function Step3Preview() {
                                             <button
                                                 onClick={() => setPageNumber(prev => Math.min(numPages, prev + 1))}
                                                 disabled={pageNumber >= numPages}
-                                                className="w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm disabled:opacity-50 transition-colors"
+                                                className="control-button w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded flex items-center justify-center text-sm disabled:opacity-50 transition-colors"
                                             >
                                                 ▶
                                             </button>
-                                        </div>
+                                        </>
                                     )}
                                 </div>
                             </div>

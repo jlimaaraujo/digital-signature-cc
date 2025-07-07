@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+frontend\cc-auth-frontend\package-lock.json
+frontend\cc-auth-frontend\package.json

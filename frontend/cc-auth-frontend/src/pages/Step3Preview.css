@@ -137,3 +137,11 @@
     position: relative !important;
     z-index: 10000 !important;
 }
+
+.text-center {
+    margin-bottom: 1rem;
+}
+.control-button{
+    font-size: 10px !important;
+    background-color: #6b7280;
+}

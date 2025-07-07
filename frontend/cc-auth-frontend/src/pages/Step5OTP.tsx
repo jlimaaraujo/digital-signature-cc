@@ -68,7 +68,7 @@ export default function Step5OTP() {
                     localStorage.setItem('signedPdfBlob', base64String);
                     
                     // Navegar para o Step6 (resultado final)
-                    navigate('/step6');
+                    navigate('/step7');
                 };
                 reader.readAsArrayBuffer(blob);
             } else {

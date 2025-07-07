@@ -40,7 +40,7 @@ export default function Step4Signature() {
     }, []);
 
     const handleBack = () => {
-        navigate('/step4');
+        navigate('/step3details');
     };
 
 
@@ -134,7 +134,7 @@ export default function Step4Signature() {
             }
             
             // Navegar para a próxima etapa (validação OTP)
-            navigate('/step5');
+            navigate('/step6');
         } catch (error) {
             // Melhor tratamento de diferentes tipos de erros
             if (error instanceof TypeError && error.message.includes('fetch')) {
