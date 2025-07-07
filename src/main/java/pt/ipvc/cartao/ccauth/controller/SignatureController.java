@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pt.ipvc.cartao.ccauth.model.ForceSmsRequest;
 import pt.ipvc.cartao.ccauth.model.OtpRequest;
 import pt.ipvc.cartao.ccauth.model.SignRequest;
 import pt.ipvc.cartao.ccauth.model.SignResult;
@@ -33,8 +34,15 @@ public class SignatureController {
     }
 
     @PostMapping("/sign")
-    public String startSigning(@RequestBody SignRequest request) {
-        return signatureService.startSigning(request);
+    public ResponseEntity<String> startSigning(@RequestBody SignRequest request) {
+        try {
+            String processId = signatureService.startSigning(request);
+            System.out.println("Sign endpoint returned processId: " + processId);
+            return ResponseEntity.ok(processId);
+        } catch (Exception e) {
+            System.err.println("Error in sign endpoint: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
     }
 
     @PostMapping("/validate-otp")
@@ -67,5 +75,31 @@ public class SignatureController {
                                    @RequestParam String signature,
                                    @RequestParam String certBase64) {
         return signatureService.verify(pdfBase64, signature, certBase64);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<?> resendOtp(@RequestBody ForceSmsRequest request) {
+        try {
+            System.out.println("Resend OTP called with processId: " + request.getProcessId() + ", citizenId: " + request.getCitizenId());
+            
+            pt.ipvc.cartao.ccauth.soap.SignStatus result = signatureService.forceSms(request.getProcessId(), request.getCitizenId());
+            
+            if (result != null) {
+                System.out.println("ForceSMS completed with code: " + result.getCode() + ", message: " + result.getMessage());
+                
+                // Verificar se o código indica sucesso
+                if ("200".equals(result.getCode()) || "0".equals(result.getCode())) {
+                    return ResponseEntity.ok().body("{\"message\":\"Código reenviado com sucesso\",\"code\":\"" + result.getCode() + "\"}");
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\":\"" + result.getMessage() + "\",\"code\":\"" + result.getCode() + "\"}");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\":\"Erro interno no serviço\"}");
+            }
+        } catch (Exception e) {
+            System.err.println("Error in resend OTP: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\":\"Erro: " + e.getMessage() + "\"}");
+        }
     }
 }

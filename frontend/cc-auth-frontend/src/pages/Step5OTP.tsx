@@ -133,47 +133,38 @@ export default function Step5OTP() {
 
         try {
             // Recuperar dados necessários do localStorage
+            const processId = localStorage.getItem('processId');
             const phoneDigits = phoneNumber.replace(/\s/g, '');
-            const formattedPhone = "+351" + phoneDigits; // Adicionar prefixo país
-            const documentInfo = localStorage.getItem('documentInfo');
-            let docName = 'Contrato Teste'; // valor padrão
+            const citizenId = "+351" + phoneDigits; // O citizenId deve incluir o prefixo +351
             
-            if (documentInfo) {
-                try {
-                    const parsedData = JSON.parse(documentInfo);
-                    docName = parsedData.name || 'Documento';
-                } catch (error) {
-                    // Se não conseguir fazer parse, usar nome padrão
-                }
-            }
-
-            // Para reenvio, vamos usar os dados salvos
-            const savedPin = localStorage.getItem('userPin');
-            
-            if (!savedPin) {
+            if (!processId) {
                 setError('Dados da sessão perdidos. Volte ao Step4 e tente novamente.');
                 return;
             }
 
-            const response = await fetch('http://localhost:8080/api/signature/sign', {
+            console.log('Reenviando código com processId:', processId, 'citizenId:', citizenId);
+
+            const response = await fetch('http://localhost:8080/api/signature/resend-otp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    phoneNumber: formattedPhone,
-                    pin: savedPin,
-                    docName: docName
+                    processId: processId,
+                    citizenId: citizenId
                 }),
             });
 
             if (response.ok) {
+                const responseData = await response.json();
+                console.log('Resposta do reenvio:', responseData);
                 alert('Código reenviado com sucesso!');
             } else {
                 let errorMessage = 'Erro ao reenviar código';
                 try {
                     const errorData = await response.json();
                     errorMessage = errorData.message || errorMessage;
+                    console.log('Erro do reenvio:', errorData);
                 } catch (jsonError) {
                     errorMessage = `Erro ${response.status}: ${response.statusText}`;
                 }

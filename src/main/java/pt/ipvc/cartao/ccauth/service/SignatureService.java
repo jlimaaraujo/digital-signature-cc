@@ -57,24 +57,28 @@ public class SignatureService {
         String encryptedPhone = CryptoUtils.encrypt(request.getPhoneNumber(), CERT_PATH);
         String encryptedPin = CryptoUtils.encrypt(request.getPin(), CERT_PATH);
 
-        if (this.lastCertificate == null || this.lastCertificate.trim().isEmpty()) {
-            try {
-                this.lastCertificate = SoapClientService.getCertificate(
-                        APPLICATION_ID.getBytes(),
-                        encryptedPhone
-                );
+        // Sempre obter o certificado antes de assinar
+        try {
+            this.lastCertificate = SoapClientService.getCertificate(
+                    APPLICATION_ID.getBytes(),
+                    encryptedPhone
+            );
 
-                if (this.lastCertificate != null) {
-                    System.out.println("Certificate obtained: present (" +
-                            this.lastCertificate.length() + " chars)");
-                }
-            } catch (Exception e) {
-                System.err.println("Failed to get certificate: " + e.getMessage());
+            if (this.lastCertificate != null) {
+                System.out.println("Certificate obtained for signing: present (" +
+                        this.lastCertificate.length() + " chars)");
+            } else {
+                System.err.println("Failed to obtain certificate - null response");
+                throw new RuntimeException("Failed to obtain certificate");
             }
+        } catch (Exception e) {
+            System.err.println("Failed to get certificate: " + e.getMessage());
+            throw new RuntimeException("Failed to get certificate: " + e.getMessage());
         }
 
         String response = SoapClientService.sign(APPLICATION_ID.getBytes(), request.getDocName(), lastHash, encryptedPhone, encryptedPin);
         this.processId = response;
+        System.out.println("Sign process started with processId: " + this.processId);
         return response;
     }
 
@@ -392,7 +396,7 @@ public class SignatureService {
             // Remove os primeiros 4 caracteres que são metadados ASN.1
             // e decodifica o resto como string UTF-8
             if (hexString.length() > 4) {
-                String dataHex = hexString.substring(4); // Remove 130a
+                String dataHex = hexString.substring(4); // Removes 130a
                 StringBuilder result = new StringBuilder();
                 for (int i = 0; i < dataHex.length(); i += 2) {
                     String hex = dataHex.substring(i, i + 2);
@@ -448,5 +452,16 @@ public class SignatureService {
         }
     }
 
-
-}
+        public pt.ipvc.cartao.ccauth.soap.SignStatus forceSms(String processId, String citizenId) {
+            System.out.println("ForceSMS called with processId: " + processId + ", citizenId: " + citizenId);
+            
+            // citizenId must be base64 encoded and encrypted before sending
+            String encryptedCitizenId = CryptoUtils.encrypt(citizenId, CERT_PATH);
+            System.out.println("Encrypted citizenId length: " + (encryptedCitizenId != null ? encryptedCitizenId.length() : "null"));
+            
+            pt.ipvc.cartao.ccauth.soap.SignStatus result = SoapClientService.forceSms(processId, encryptedCitizenId, APPLICATION_ID.getBytes());
+            System.out.println("ForceSMS result: " + (result != null ? "Success" : "Failed"));
+            
+            return result;
+        }
+    }

@@ -69,4 +69,23 @@ public class SoapClientService {
 
         return new SignResult(assinaturaBase64, certBase64);
     }
+
+    public static pt.ipvc.cartao.ccauth.soap.SignStatus forceSms(String processId, String encryptedCitizenId, byte[] applicationId) {
+        System.out.println("SOAP ForceSMS - processId: " + processId);
+        System.out.println("SOAP ForceSMS - encryptedCitizenId length: " + (encryptedCitizenId != null ? encryptedCitizenId.length() : "null"));
+        System.out.println("SOAP ForceSMS - applicationId length: " + (applicationId != null ? applicationId.length : "null"));
+        
+        pt.ipvc.cartao.ccauth.soap.SignStatus result = port.forceSMS(processId, encryptedCitizenId, applicationId);
+        
+        System.out.println("SOAP ForceSMS - Result: " + (result != null ? "Success" : "null"));
+        if (result != null) {
+            System.out.println("SOAP ForceSMS - Result Code: " + result.getCode());
+            System.out.println("SOAP ForceSMS - Result Field: " + result.getField());
+            System.out.println("SOAP ForceSMS - Result FieldValue: " + result.getFieldValue());
+            System.out.println("SOAP ForceSMS - Result Message: " + result.getMessage());
+            System.out.println("SOAP ForceSMS - Result ProcessId: " + result.getProcessId());
+        }
+        
+        return result;
+    }
 }
