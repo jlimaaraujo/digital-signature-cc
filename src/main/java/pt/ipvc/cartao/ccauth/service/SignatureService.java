@@ -163,51 +163,7 @@ public class SignatureService {
         }
     }
 
-    public SignResult validateOtpWithoutVisual(OtpRequest request) {
-        try {
-            String encryptedOtp = CryptoUtils.encrypt(request.getOtp(), CERT_PATH);
 
-            SignResult result = SoapClientService.validateOtp(encryptedOtp, this.processId, APPLICATION_ID.getBytes());
-
-            System.out.println("Certificate from SOAP response: " +
-                    (result.getCertBase64() != null ? "present (" + result.getCertBase64().length() + " chars)" : "null"));
-            System.out.println("Stored certificate: " +
-                    (this.lastCertificate != null ? "present (" + this.lastCertificate.length() + " chars)" : "null"));
-
-            String certificateToUse = this.lastCertificate;
-
-            if (certificateToUse != null) {
-                System.out.println("Using stored certificate from getCertificate call");
-            } else {
-                System.out.println("No certificate available");
-                return null;
-            }
-
-            // Process the signed PDF without visual signature
-            byte[] signedPdfBytes = processSignedPdfWithoutVisual(this.originalPdfBytes,
-                    Base64.getDecoder().decode(result.getAssinaturaBase64()),
-                    certificateToUse);
-
-            if (signedPdfBytes != null) {
-                System.out.println("PDF processado e assinado com sucesso (sem marca visual)");
-
-                // Save the signed PDF to file
-                String savedPath = saveSignedPdf(signedPdfBytes, "_no_visual.pdf");
-
-                result.setSignedPdfBytes(signedPdfBytes);
-
-                return result;
-            } else {
-                System.out.println("Falha no processamento do PDF");
-                return null;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Erro na validação OTP: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     private byte[] processSignedPdfWithoutVisual(byte[] pdfData, byte[] signature, String certificate) {
         try {
@@ -242,36 +198,7 @@ public class SignatureService {
         }
     }
 
-    private byte[] processSignedPdf(byte[] pdfData, byte[] signature, String certificate) {
-        try {
-            PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfData));
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PdfWriter writer = new PdfWriter(outputStream);
-            PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
-            // Add signature as metadata
-            String signatureBase64 = Base64.getEncoder().encodeToString(signature);
-            PdfDocumentInfo info = pdfDoc.getDocumentInfo();
-            info.setMoreInfo("AssinaturaCMD", signatureBase64);
-
-            // Extract name and ID from certificate
-            String[] userData = extractUserDataFromCertificate(certificate);
-            String nome = userData[0];
-            String ccNumber = userData[1];
-
-            // Add visual signature overlay to first page
-            addVisualSignature(pdfDoc, nome, ccNumber);
-
-            pdfDoc.close();
-
-            return outputStream.toByteArray();
-
-        } catch (Exception e) {
-            System.err.println("Erro ao processar PDF assinado: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     private void addVisualSignatureWithPosition(PdfDocument pdfDoc, String nome, String ccNumber,
                                                 int pageNumber, float xPercent, float yPercent) {
@@ -350,83 +277,7 @@ public class SignatureService {
         }
     }
 
-    private void addVisualSignature(PdfDocument pdfDoc, String nome, String ccNumber) {
-        try {
-            Document document = new Document(pdfDoc);
 
-            // Posições (similar ao Python)
-            float textX = 130;
-            float textY = 107;
-            float logoW = 36;
-            float logoH = 36;
-            float logoX = textX - 2;
-            float logoY = textY - 32;
-
-            // Adicionar logo com opacidade
-            try {
-                String logoPath = "src/main/resources/logo/CMD-assinatura-2.png";
-                java.nio.file.Path path = java.nio.file.Paths.get(logoPath);
-
-                if (java.nio.file.Files.exists(path)) {
-                    com.itextpdf.io.image.ImageData imageData = com.itextpdf.io.image.ImageDataFactory.create(logoPath);
-                    com.itextpdf.layout.element.Image logo = new com.itextpdf.layout.element.Image(imageData);
-
-                    // Configurar tamanho e posição
-                    logo.setWidth(logoW);
-                    logo.setHeight(logoH);
-                    logo.setFixedPosition(logoX, logoY);
-
-                    // Definir opacidade (0.15 = 15% opacidade)
-                    logo.setOpacity(0.15f);
-
-                    document.add(logo);
-                } else {
-                    System.out.println("Logo não encontrado em: " + logoPath);
-                }
-            } catch (Exception e) {
-                System.err.println("Erro ao adicionar logo: " + e.getMessage());
-            }
-
-            // Adicionar texto da assinatura
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
-
-            // Texto "Assinado por:" em negrito
-            Paragraph assinadoPor = new Paragraph("Assinado por: ")
-                    .setFontSize(6)
-                    .setFixedPosition(textX, textY - 8, 200);
-            document.add(assinadoPor);
-
-            // Nome do utilizador
-            Paragraph nomeText = new Paragraph(nome)
-                    .setFontSize(6)
-                    .setFixedPosition(textX + 45, textY - 8, 150);
-            document.add(nomeText);
-
-            // Texto "Num. de Identificação:"
-            Paragraph numIdText = new Paragraph("Num. de Identificação: ")
-                    .setFontSize(6)
-                    .setFixedPosition(textX, textY - 16, 200);
-            document.add(numIdText);
-
-            // Número do CC
-            Paragraph ccText = new Paragraph(ccNumber)
-                    .setFontSize(6)
-                    .setFixedPosition(textX + 67, textY - 16, 100);
-            document.add(ccText);
-
-            // Data
-            Paragraph dataText = new Paragraph("Data: " + timestamp)
-                    .setFontSize(6)
-                    .setFixedPosition(textX, textY - 24, 200);
-            document.add(dataText);
-
-            document.close();
-
-        } catch (Exception e) {
-            System.err.println("Erro ao adicionar assinatura visual: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
     private String[] extractUserDataFromCertificate(String certificate) {
         try {
@@ -597,83 +448,5 @@ public class SignatureService {
         }
     }
 
-    // Enum para escolher o tipo de assinatura
-    public enum SignatureType {
-        WITH_VISUAL, WITHOUT_VISUAL, BOTH
-    }
 
-    public SignResult validateOtpWithChoice(OtpRequest request, SignatureType signatureType) {
-        try {
-            String encryptedOtp = CryptoUtils.encrypt(request.getOtp(), CERT_PATH);
-
-            SignResult result = SoapClientService.validateOtp(encryptedOtp, this.processId, APPLICATION_ID.getBytes());
-
-            System.out.println("Certificate from SOAP response: " +
-                    (result.getCertBase64() != null ? "present (" + result.getCertBase64().length() + " chars)" : "null"));
-            System.out.println("Stored certificate: " +
-                    (this.lastCertificate != null ? "present (" + this.lastCertificate.length() + " chars)" : "null"));
-
-            String certificateToUse = this.lastCertificate;
-
-            if (certificateToUse == null) {
-                System.out.println("No certificate available");
-                return null;
-            }
-
-            byte[] decodedSignature = Base64.getDecoder().decode(result.getAssinaturaBase64());
-            byte[] signedPdfWithVisual = null;
-            byte[] signedPdfWithoutVisual = null;
-
-            // Gerar conforme a escolha do utilizador
-            switch (signatureType) {
-                case WITH_VISUAL:
-                    signedPdfWithVisual = processSignedPdf(this.originalPdfBytes, decodedSignature, certificateToUse);
-                    if (signedPdfWithVisual != null) {
-                        String savedPath = saveSignedPdf(signedPdfWithVisual, "_with_visual.pdf");
-                        System.out.println("Ficheiro com marca visual gerado: " + savedPath);
-                        result.setSignedPdfBytes(signedPdfWithVisual);
-                    }
-                    break;
-
-                case WITHOUT_VISUAL:
-                    signedPdfWithoutVisual = processSignedPdfWithoutVisual(this.originalPdfBytes, decodedSignature, certificateToUse);
-                    if (signedPdfWithoutVisual != null) {
-                        String savedPath = saveSignedPdf(signedPdfWithoutVisual, "_no_visual.pdf");
-                        System.out.println("Ficheiro sem marca visual gerado: " + savedPath);
-                        result.setSignedPdfBytes(signedPdfWithoutVisual);
-                    }
-                    break;
-
-                case BOTH:
-                    signedPdfWithVisual = processSignedPdf(this.originalPdfBytes, decodedSignature, certificateToUse);
-                    signedPdfWithoutVisual = processSignedPdfWithoutVisual(this.originalPdfBytes, decodedSignature, certificateToUse);
-
-                    if (signedPdfWithVisual != null && signedPdfWithoutVisual != null) {
-                        String savedPathWithVisual = saveSignedPdf(signedPdfWithVisual, "_with_visual.pdf");
-                        String savedPathWithoutVisual = saveSignedPdf(signedPdfWithoutVisual, "_no_visual.pdf");
-
-                        System.out.println("Ambos os ficheiros gerados:");
-                        System.out.println("  Com marca visual: " + savedPathWithVisual);
-                        System.out.println("  Sem marca visual: " + savedPathWithoutVisual);
-
-                        // Retornar o PDF com marca visual como principal
-                        result.setSignedPdfBytes(signedPdfWithVisual);
-                    }
-                    break;
-            }
-
-            if (result.getSignedPdfBytes() != null) {
-                System.out.println("PDF(s) processado(s) e assinado(s) com sucesso");
-                return result;
-            } else {
-                System.out.println("Falha no processamento do(s) PDF(s)");
-                return null;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Erro na validação OTP: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
