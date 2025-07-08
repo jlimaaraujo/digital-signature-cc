@@ -7,19 +7,6 @@ export default function Step6Result() {
     const [setDocumentInfo] = useState<any>(null);
     const [isSuccess] = useState<boolean>(true); // Em produção, isso viria do resultado da assinatura
 
-    useEffect(() => {
-        // Recuperar informações do documento do localStorage
-        const documentData = localStorage.getItem('documentInfo');
-        if (documentData) {
-            try {
-                const parsedData = JSON.parse(documentData);
-                setDocumentInfo(parsedData);
-            } catch (error) {
-                // Se não conseguir fazer parse, ignorar erro
-            }
-        }
-    }, []);
-
     const handleDownload = async () => {
         try {
             // Recuperar o PDF assinado do localStorage
@@ -75,6 +62,24 @@ export default function Step6Result() {
         navigate('/');
     };
 
+    useEffect(() => {
+        // Recuperar informações do documento do localStorage
+        const documentData = localStorage.getItem('documentInfo');
+        if (documentData) {
+            try {
+                const parsedData = JSON.parse(documentData);
+                setDocumentInfo(parsedData);
+            } catch (error) {
+                // Se não conseguir fazer parse, ignorar erro
+            }
+        }
+
+        // Se a assinatura foi bem-sucedida, iniciar download automaticamente
+        if (isSuccess) {
+            handleDownload();
+        }
+    }, []);
+
     return (
         <div className="center-content">
             <div className="rounded-lg shadow-md p-12 max-w-2xl flex flex-col items-center text-center">
@@ -89,7 +94,7 @@ export default function Step6Result() {
                         </h2>
 
                         <p className="text-gray-700 mb-8 text-lg leading-relaxed">
-                            O seu documento foi assinado digitalmente com a Chave Móvel Digital e está pronto para download.
+                            O seu documento foi assinado digitalmente com a Chave Móvel Digital. O download iniciou automaticamente.
                         </p>
 
                         {/* Botões de ação */}
@@ -98,7 +103,7 @@ export default function Step6Result() {
                                 onClick={handleDownload}
                                 className="bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-md transition-colors duration-200 flex items-center justify-center"
                             >
-                                DESCARREGAR DOCUMENTO ASSINADO
+                                DESCARREGAR NOVAMENTE
                             </button>
 
                             <button
