@@ -91,7 +91,7 @@ export default function Step4Signature() {
                     const signatureConfig = JSON.parse(signatureConfigData);
                     hasVisualSignature = signatureConfig.showVisualSignature || false;
                 } catch (error) {
-                    console.error('Erro ao carregar configuração de assinatura:', error);
+                    // Falha silenciosa ao carregar configuração
                 }
             }
             localStorage.setItem('hasVisualSignature', JSON.stringify(hasVisualSignature));
@@ -111,7 +111,8 @@ export default function Step4Signature() {
                     const certError = await certResponse.json();
                     errorMessage = certError.message || errorMessage;
                 } catch (jsonError) {
-                    errorMessage = `Erro ${certResponse.status}: ${certResponse.statusText}`;
+                    // Usar mensagem genérica em caso de erro
+                    errorMessage = 'Erro ao obter certificado';
                 }
                 throw new Error(errorMessage);
             }
@@ -147,7 +148,8 @@ export default function Step4Signature() {
                     const signError = await signResponse.json();
                     errorMessage = signError.message || errorMessage;
                 } catch (jsonError) {
-                    errorMessage = `Erro ${signResponse.status}: ${signResponse.statusText}`;
+                    // Usar mensagem genérica em caso de erro
+                    errorMessage = 'Erro ao assinar documento';
                 }
                 throw new Error(errorMessage);
             }
@@ -155,18 +157,16 @@ export default function Step4Signature() {
             // Guardar o processId retornado para uso posterior
             const processId = await signResponse.text();
             localStorage.setItem('processId', processId);
-            console.log('ProcessId salvo:', processId);
+            // Log removido em produção
             
             // Navegar para a próxima etapa (validação OTP)
             navigate('/step6');
         } catch (error) {
-            // Melhor tratamento de diferentes tipos de erros
-            if (error instanceof TypeError && error.message.includes('fetch')) {
-                setError('Erro de conexão. Verifique se o backend está a funcionar em http://localhost:8080');
-            } else if (error instanceof Error) {
+            // Tratamento genérico de erros sem exposição de detalhes técnicos
+            if (error instanceof Error) {
                 setError(error.message);
             } else {
-                setError('Erro desconhecido ao processar assinatura. Tente novamente.');
+                setError('Erro ao processar assinatura. Tente novamente.');
             }
         } finally {
             setIsLoading(false);

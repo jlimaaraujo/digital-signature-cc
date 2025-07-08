@@ -26,13 +26,13 @@ export default function Step3Details() {
         if (documentData) {
             try {
                 const parsedData = JSON.parse(documentData);
-                console.log('Document info loaded:', parsedData);
+                // Log removido em produção
                 setDocumentInfo(parsedData);
             } catch (error) {
-                console.error('Erro ao carregar documento:', error);
+                // Falha silenciosa ao carregar documento
             }
         } else {
-            console.warn('Nenhuma informação de documento encontrada no localStorage');
+            // Log removido em produção
         }
 
         // Só recuperar configurações de assinatura se estivermos voltando da página seguinte
@@ -53,7 +53,7 @@ export default function Step3Details() {
                         });
                     }
                 } catch (error) {
-                    console.error('Erro ao carregar configurações de assinatura:', error);
+                    // Falha silenciosa ao carregar configurações
                 }
             }
         } else {
@@ -64,12 +64,12 @@ export default function Step3Details() {
     }, []);
 
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-        console.log('PDF carregado com sucesso. Número de páginas:', numPages);
+        // Log removido em produção
         setNumPages(numPages);
     };
 
     const onPageLoadSuccess = (page: any) => {
-        console.log('Página carregada com sucesso:', selectedPage);
+        // Log removido em produção
         const { width, height } = page.getViewport({ scale: 1 });
         setPageWidth(width);
         setPageHeight(height);
@@ -197,8 +197,8 @@ export default function Step3Details() {
                                 <Document
                                     file={documentInfo.fileData}
                                     onLoadSuccess={onDocumentLoadSuccess}
-                                    onLoadError={(error) => {
-                                        console.error('Erro ao carregar PDF:', error);
+                                    onLoadError={() => {
+                                        // Log removido em produção
                                     }}
                                     loading={
                                         <div className="flex items-center justify-center h-full">

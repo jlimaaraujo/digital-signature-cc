@@ -59,18 +59,11 @@ export default function Step5OTP() {
                     const parsedData = JSON.parse(documentInfo);
                     documentName = parsedData.name || 'Documento';
                 } catch (error) {
-                    console.error('Erro ao carregar nome do documento:', error);
+                    // Falha silenciosa ao carregar nome do documento
                 }
             }
 
-            console.log('Enviando dados para validação OTP:', {
-                otp: otpCode,
-                documentName: documentName,
-                hasVisualSignature: showVisual,
-                signaturePage: page,
-                signatureXPercent: xPercent,
-                signatureYPercent: yPercent
-            });
+            // Dados removidos em produção para segurança
 
             // Chamar o endpoint de validação OTP com todos os dados necessários
             const response = await fetch('http://localhost:8080/api/signature/validate-otp', {
@@ -111,17 +104,14 @@ export default function Step5OTP() {
                     const errorData = await response.json();
                     errorMessage = errorData.message || errorMessage;
                 } catch (jsonError) {
-                    errorMessage = `Erro ${response.status}: ${response.statusText}`;
+                    // Usar mensagem genérica em caso de erro de parsing
+                    errorMessage = 'Código OTP inválido ou expirado';
                 }
                 setError(errorMessage);
             }
         } catch (error) {
-            // Melhor tratamento de diferentes tipos de erros
-            if (error instanceof TypeError && error.message.includes('fetch')) {
-                setError('Erro de conexão. Verifique se o backend está a funcionar em http://localhost:8080');
-            } else {
-                setError('Erro de conexão. Verifique se o backend está a funcionar.');
-            }
+            // Tratamento genérico de erros sem exposição de detalhes técnicos
+            setError('Erro de conexão. Tente novamente.');
         } finally {
             setIsLoading(false);
         }
@@ -142,7 +132,7 @@ export default function Step5OTP() {
                 return;
             }
 
-            console.log('Reenviando código com processId:', processId, 'citizenId:', citizenId);
+            // Dados removidos em produção por segurança
 
             const response = await fetch('http://localhost:8080/api/signature/resend-otp', {
                 method: 'POST',
@@ -156,28 +146,22 @@ export default function Step5OTP() {
             });
 
             if (response.ok) {
-                const responseData = await response.json();
-                console.log('Resposta do reenvio:', responseData);
+                await response.json(); // Consumir resposta
                 alert('Código reenviado com sucesso!');
             } else {
                 let errorMessage = 'Erro ao reenviar código';
                 try {
                     const errorData = await response.json();
                     errorMessage = errorData.message || errorMessage;
-                    console.log('Erro do reenvio:', errorData);
+                    // Log removido em produção
                 } catch (jsonError) {
-                    errorMessage = `Erro ${response.status}: ${response.statusText}`;
+                    // Usar mensagem genérica em caso de erro
+                    errorMessage = 'Erro ao reenviar código';
                 }
                 setError(errorMessage);
             }
         } catch (error) {
-            if (error instanceof TypeError && error.message.includes('fetch')) {
-                setError('Erro de conexão. Verifique se o backend está a funcionar em http://localhost:8080');
-            } else if (error instanceof Error) {
-                setError(error.message);
-            } else {
-                setError('Erro ao reenviar código. Tente novamente.');
-            }
+            setError('Erro ao reenviar código. Tente novamente.');
         } finally {
             setIsLoading(false);
         }

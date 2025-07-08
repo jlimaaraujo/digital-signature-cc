@@ -39,8 +39,7 @@ export default function Step2EscolhaDocumento() {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Erro no servidor: ${response.status} - ${errorText}`);
+                throw new Error('Erro ao processar documento');
             }
 
             // Tentar ler como texto primeiro
@@ -76,7 +75,7 @@ export default function Step2EscolhaDocumento() {
 
             return result;
         } catch (error) {
-            console.error('Erro ao enviar o arquivo:', error);
+            // Log removido em produção
             throw error;
         } finally {
             setIsUploading(false);
