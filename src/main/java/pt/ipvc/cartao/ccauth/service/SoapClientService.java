@@ -1,5 +1,7 @@
 package pt.ipvc.cartao.ccauth.service;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import javax.xml.bind.JAXBElement;
 import pt.ipvc.cartao.ccauth.model.SignResult;
 import pt.ipvc.cartao.ccauth.soap.*;
@@ -10,9 +12,10 @@ import java.util.Base64;
 
 public class SoapClientService {
 
-    private static final String WSDL_URL = "https://preprod.cmd.autenticacao.gov.pt/Ama.Authentication.Frontend/SCMDService.svc";
-    private static final String USERNAME = "KzMry3YB";
-    private static final String PASSWORD = "aWaSkfqbCOn6upI5FAMK";
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String WSDL_URL = dotenv.get("WSDL_URL");
+    private static final String USERNAME = dotenv.get("USERNAME");
+    private static final String PASSWORD = dotenv.get("PASSWORD");
 
     private static SCMDService port;
 

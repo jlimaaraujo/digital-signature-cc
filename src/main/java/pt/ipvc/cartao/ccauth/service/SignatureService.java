@@ -6,6 +6,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.stereotype.Service;
 import pt.ipvc.cartao.ccauth.model.OtpRequest;
 import pt.ipvc.cartao.ccauth.model.SignRequest;
@@ -24,8 +25,9 @@ import java.util.Base64;
 @Service
 public class SignatureService {
 
-    private static final String APPLICATION_ID = "882ec3e2-97c4-4abc-bb6c-5f9a59fbbf39";
-    private static final String CERT_PATH = "cifra/cifra.cer";
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String APPLICATION_ID = dotenv.get("APPLICATION_ID");
+    private static final String CERT_PATH = dotenv.get("CERT_PATH");
 
     private String processId;
     private byte[] lastHash;
