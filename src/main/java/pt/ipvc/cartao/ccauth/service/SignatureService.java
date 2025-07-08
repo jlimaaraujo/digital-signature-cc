@@ -42,13 +42,7 @@ public class SignatureService {
         String encryptedPhone = CryptoUtils.encrypt(phoneNumber, CERT_PATH);
         String cert = SoapClientService.getCertificate(APPLICATION_ID.getBytes(), encryptedPhone);
 
-        System.out.println("Certificate retrieved from SOAP: " +
-                (cert != null ? "present (" + cert.length() + " chars)" : "null"));
-
         this.lastCertificate = cert;
-
-        System.out.println("Certificate stored in service: " +
-                (this.lastCertificate != null ? "present (" + this.lastCertificate.length() + " chars)" : "null"));
 
         return cert;
     }
@@ -65,20 +59,15 @@ public class SignatureService {
             );
 
             if (this.lastCertificate != null) {
-                System.out.println("Certificate obtained for signing: present (" +
-                        this.lastCertificate.length() + " chars)");
             } else {
-                System.err.println("Failed to obtain certificate - null response");
                 throw new RuntimeException("Failed to obtain certificate");
             }
         } catch (Exception e) {
-            System.err.println("Failed to get certificate: " + e.getMessage());
             throw new RuntimeException("Failed to get certificate: " + e.getMessage());
         }
 
         String response = SoapClientService.sign(APPLICATION_ID.getBytes(), request.getDocName(), lastHash, encryptedPhone, encryptedPin);
         this.processId = response;
-        System.out.println("Sign process started with processId: " + this.processId);
         return response;
     }
 
@@ -89,7 +78,6 @@ public class SignatureService {
 
             String certificateToUse = this.lastCertificate;
             if (certificateToUse == null) {
-                System.out.println("No certificate available");
                 return null;
             }
 
@@ -108,9 +96,15 @@ public class SignatureService {
 
                 if (signedPdf != null) {
                     String savedPath = saveSignedPdf(signedPdf, "_positioned.pdf");
-                    System.out.println("PDF com assinatura posicionada: " + savedPath);
                     result.setSignedPdfBytes(signedPdf);
                 }
+
+                // Adicionar motivo e local como metadados no PDF
+                PdfDocument pdfDoc = new PdfDocument(new PdfReader(new ByteArrayInputStream(this.originalPdfBytes)), new PdfWriter(new ByteArrayOutputStream()));
+                PdfDocumentInfo info = pdfDoc.getDocumentInfo();
+                info.setMoreInfo("Motivo", request.getMotivo());
+                info.setMoreInfo("Local", request.getLocal());
+                pdfDoc.close();
             } else {
                 // Processar sem assinatura visual
                 byte[] signedPdf = processSignedPdfWithoutVisual(
@@ -121,7 +115,6 @@ public class SignatureService {
 
                 if (signedPdf != null) {
                     String savedPath = saveSignedPdf(signedPdf, "_no_visual.pdf");
-                    System.out.println("PDF sem marca visual: " + savedPath);
                     result.setSignedPdfBytes(signedPdf);
                 }
             }
@@ -129,7 +122,6 @@ public class SignatureService {
             return result;
 
         } catch (Exception e) {
-            System.err.println("Erro na validação OTP: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -161,7 +153,6 @@ public class SignatureService {
             return outputStream.toByteArray();
 
         } catch (Exception e) {
-            System.err.println("Erro ao processar PDF com posição: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -196,7 +187,6 @@ public class SignatureService {
             return outputStream.toByteArray();
 
         } catch (Exception e) {
-            System.err.println("Erro ao processar PDF assinado sem marca visual: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -247,7 +237,6 @@ public class SignatureService {
                     document.add(logo);
                 }
             } catch (Exception e) {
-                System.err.println("Erro ao adicionar logo: " + e.getMessage());
             }
 
             // Adicionar texto da assinatura
@@ -276,7 +265,6 @@ public class SignatureService {
             document.close();
 
         } catch (Exception e) {
-            System.err.println("Erro ao adicionar assinatura visual: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -434,7 +422,7 @@ public class SignatureService {
                 java.nio.file.Files.createDirectories(outputPath);
             }
 
-            // Generate filename with timestamp
+            // Gera um nome de ficheiro único com timestamp
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             String fileName = "signed_" + timestamp + suffix;
             String filePath = outputDir + "/" + fileName;
@@ -442,7 +430,6 @@ public class SignatureService {
             // Write the signed PDF to file
             java.nio.file.Files.write(java.nio.file.Paths.get(filePath), signedPdfBytes);
 
-            System.out.println("Signed PDF saved to: " + filePath);
             return filePath;
 
         } catch (Exception e) {
@@ -455,7 +442,7 @@ public class SignatureService {
         public pt.ipvc.cartao.ccauth.soap.SignStatus forceSms(String processId, String citizenId) {
             System.out.println("ForceSMS called with processId: " + processId + ", citizenId: " + citizenId);
             
-            // citizenId must be base64 encoded and encrypted before sending
+            // citizenId deve ser encriptado antes de enviar
             String encryptedCitizenId = CryptoUtils.encrypt(citizenId, CERT_PATH);
             System.out.println("Encrypted citizenId length: " + (encryptedCitizenId != null ? encryptedCitizenId.length() : "null"));
             

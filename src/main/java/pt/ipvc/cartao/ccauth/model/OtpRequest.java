@@ -7,6 +7,8 @@ public class OtpRequest {
     private int signaturePage = 1;
     private float signatureXPercent = 50.0f;
     private float signatureYPercent = 50.0f;
+    private String motivo;
+    private String local;
 
     public String getOtp() {
         return otp;
@@ -54,5 +56,21 @@ public class OtpRequest {
 
     public void setSignatureYPercent(float signatureYPercent) {
         this.signatureYPercent = signatureYPercent;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
+    public String getLocal() {
+        return local;
+    }
+
+    public void setLocal(String local) {
+        this.local = local;
     }
 }

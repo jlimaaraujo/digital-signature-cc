@@ -37,10 +37,8 @@ public class SignatureController {
     public ResponseEntity<String> startSigning(@RequestBody SignRequest request) {
         try {
             String processId = signatureService.startSigning(request);
-            System.out.println("Sign endpoint returned processId: " + processId);
             return ResponseEntity.ok(processId);
         } catch (Exception e) {
-            System.err.println("Error in sign endpoint: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
@@ -51,7 +49,6 @@ public class SignatureController {
             SignResult response = signatureService.validateOtp(request);
 
             if (response == null || response.getSignedPdfBytes() == null || response.getSignedPdfBytes().length == 0) {
-                System.err.println("No signed PDF data returned from service");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
 
@@ -64,8 +61,6 @@ public class SignatureController {
                     .body(resource);
 
         } catch (Exception e) {
-            System.err.println("Error in validateOtp: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
@@ -80,12 +75,10 @@ public class SignatureController {
     @PostMapping("/resend-otp")
     public ResponseEntity<?> resendOtp(@RequestBody ForceSmsRequest request) {
         try {
-            System.out.println("Resend OTP called with processId: " + request.getProcessId() + ", citizenId: " + request.getCitizenId());
             
             pt.ipvc.cartao.ccauth.soap.SignStatus result = signatureService.forceSms(request.getProcessId(), request.getCitizenId());
             
             if (result != null) {
-                System.out.println("ForceSMS completed with code: " + result.getCode() + ", message: " + result.getMessage());
                 
                 // Verificar se o código indica sucesso
                 if ("200".equals(result.getCode()) || "0".equals(result.getCode())) {
@@ -97,8 +90,6 @@ public class SignatureController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\":\"Erro interno no serviço\"}");
             }
         } catch (Exception e) {
-            System.err.println("Error in resend OTP: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\":\"Erro: " + e.getMessage() + "\"}");
         }
     }

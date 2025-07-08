@@ -21,17 +21,13 @@ public class FileCleanupService {
     
     @Value("${file.cleanup.max-age-hours:24}")
     private long maxAgeHours;
-    
-    /**
-     * Executa limpeza automatica conforme configurado no application.properties
-     */
+
     @Scheduled(cron = "${file.cleanup.schedule.cron:0 0 */6 * * *}")
     public void cleanupOldFiles() {
         try {
             Path outputPath = Paths.get(outputDir);
             
             if (!Files.exists(outputPath)) {
-                System.out.println("Output directory does not exist: " + outputDir);
                 return;
             }
 
@@ -39,10 +35,7 @@ public class FileCleanupService {
             long maxAgeMillis = TimeUnit.HOURS.toMillis(maxAgeHours);
             int deletedCount = 0;
 
-            System.out.println("Starting file cleanup in: " + outputDir);
-            System.out.println("Deleting files older than " + maxAgeHours + " hours");
-
-            // Percorrer todos os arquivos no diretório
+            // Percorrer todos os ficheiros no diretório
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(outputPath, "signed_*.pdf")) {
                 for (Path file : stream) {
                     try {
@@ -52,7 +45,6 @@ public class FileCleanupService {
                         if (fileAge > maxAgeMillis) {
                             Files.delete(file);
                             deletedCount++;
-                            System.out.println("Deleted old file: " + file.getFileName());
                         }
                     } catch (IOException e) {
                         System.err.println("Error processing file " + file.getFileName() + ": " + e.getMessage());
@@ -60,18 +52,13 @@ public class FileCleanupService {
                 }
             }
 
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            System.out.println("[" + timestamp + "] File cleanup completed. Deleted " + deletedCount + " files.");
-
         } catch (IOException e) {
             System.err.println("Error during file cleanup: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Método para limpeza manual (pode ser chamado via endpoint se necessário)
-     */
+    // Método para limpeza manual (pode ser chamado via endpoint se necessário)
     public int cleanupFilesOlderThan(long hours) {
         try {
             Path outputPath = Paths.get(outputDir);
@@ -108,9 +95,8 @@ public class FileCleanupService {
         }
     }
 
-    /**
-     * Limpar todos os arquivos assinados (usar com cuidado!)
-     */
+
+     //Limpar todos os ficheiros assinados (usar com cuidado!)
     public int cleanupAllSignedFiles() {
         try {
             Path outputPath = Paths.get(outputDir);
@@ -126,7 +112,6 @@ public class FileCleanupService {
                     try {
                         Files.delete(file);
                         deletedCount++;
-                        System.out.println("Deleted file: " + file.getFileName());
                     } catch (IOException e) {
                         System.err.println("Error deleting file " + file.getFileName() + ": " + e.getMessage());
                     }
@@ -141,9 +126,8 @@ public class FileCleanupService {
         }
     }
 
-    /**
-     * Obter estatísticas dos arquivos
-     */
+
+     // Obter estatísticas dos ficheiros
     public String getFileStatistics() {
         try {
             Path outputPath = Paths.get(outputDir);

@@ -12,10 +12,6 @@ public class FileCleanupController {
     @Autowired
     private FileCleanupService fileCleanupService;
 
-    /**
-     * Endpoint para limpeza manual de arquivos antigos
-     * GET /api/admin/cleanup?hours=24
-     */
     @GetMapping("/cleanup")
     public ResponseEntity<String> cleanupFiles(@RequestParam(defaultValue = "24") long hours) {
         try {
@@ -23,7 +19,7 @@ public class FileCleanupController {
             
             String message = String.format(
                 "Limpeza concluída com sucesso!\n" +
-                "- Arquivos deletados: %d\n" +
+                "- Ficheiros apagados: %d\n" +
                 "- Critério: mais antigos que %d horas",
                 deletedCount, hours
             );
@@ -34,10 +30,6 @@ public class FileCleanupController {
         }
     }
 
-    /**
-     * Endpoint para obter estatísticas dos arquivos
-     * GET /api/admin/file-stats
-     */
     @GetMapping("/file-stats")
     public ResponseEntity<String> getFileStatistics() {
         try {
@@ -48,10 +40,6 @@ public class FileCleanupController {
         }
     }
 
-    /**
-     * Endpoint para limpeza completa (CUIDADO!)
-     * DELETE /api/admin/cleanup-all
-     */
     @DeleteMapping("/cleanup-all")
     public ResponseEntity<String> cleanupAllFiles() {
         try {
@@ -59,7 +47,7 @@ public class FileCleanupController {
             
             String message = String.format(
                 "Limpeza total concluída!\n" +
-                "- Todos os arquivos assinados foram deletados: %d arquivos",
+                "- Todos os ficheiros assinados foram apagados: %d ficheiros",
                 deletedCount
             );
             
@@ -69,10 +57,6 @@ public class FileCleanupController {
         }
     }
 
-    /**
-     * Endpoint para forçar limpeza automática agora
-     * POST /api/admin/force-cleanup
-     */
     @PostMapping("/force-cleanup")
     public ResponseEntity<String> forceCleanup() {
         try {
