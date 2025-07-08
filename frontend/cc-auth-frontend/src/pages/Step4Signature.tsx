@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import './Step4Signature.css';
+import { useNavigationGuard } from '../contexts/NavigationGuardContext';
 
 export default function Step4Signature() {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ export default function Step4Signature() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [showPin, setShowPin] = useState<boolean>(false);
+    const { setAllowedStep } = useNavigationGuard();
 
     useEffect(() => {
         // Recuperar informações do documento do localStorage
@@ -58,7 +60,6 @@ export default function Step4Signature() {
     const handleSign = async () => {
         if (!phoneNumber || !pin) {
             setError('Por favor, preencha todos os campos');
-            //window.alert('É obrigatório preencher todos os campos!');
             return;
         }
 
@@ -159,7 +160,7 @@ export default function Step4Signature() {
             localStorage.setItem('processId', processId);
             // Log removido em produção
             
-            // Navegar para a próxima etapa (validação OTP)
+            setAllowedStep(6); // Permitir navegação para o passo 6
             navigate('/step6');
         } catch (error) {
             // Tratamento genérico de erros sem exposição de detalhes técnicos

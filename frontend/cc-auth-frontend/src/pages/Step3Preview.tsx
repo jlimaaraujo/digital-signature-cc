@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useNavigationGuard } from '../contexts/NavigationGuardContext';
 import './Step3Preview.css';
 
 // Configurar o worker do PDF.js
@@ -8,6 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 export default function Step3Preview() {
     const navigate = useNavigate();
+    const { setAllowedStep } = useNavigationGuard();
     const [documentInfo, setDocumentInfo] = useState<any>(null);
     const [numPages, setNumPages] = useState<number>(0);
     const [pageNumber, setPageNumber] = useState<number>(1);
@@ -40,7 +42,7 @@ export default function Step3Preview() {
     };
 
     const handleNext = () => {
-        // Navegar diretamente para a próxima etapa
+        setAllowedStep(4); // Permitir navegação para o passo 4
         navigate('/step4');
     };
 

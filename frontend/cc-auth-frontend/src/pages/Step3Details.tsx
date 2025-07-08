@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useNavigationGuard } from '../contexts/NavigationGuardContext';
 import './Step3Details.css';
 
 // Configurar o worker do PDF.js
@@ -8,6 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 export default function Step3Details() {
     const navigate = useNavigate();
+    const { setAllowedStep } = useNavigationGuard();
     const [showVisualSignature, setShowVisualSignature] = useState<boolean>(false);
     const [documentInfo, setDocumentInfo] = useState<any>(null);
     const [numPages, setNumPages] = useState<number>(0);
@@ -35,11 +37,10 @@ export default function Step3Details() {
             // Log removido em produção
         }
 
-        // Só recuperar configurações de assinatura se estivermos voltando da página seguinte
-        // (verificar se há dados salvos de telefone, indicando que já passou pelo Step4)
+        // (verificar se há dados guardados de telefone, indicando que já passou pelo Step4)
         const phoneNumber = localStorage.getItem('phoneNumber');
         if (phoneNumber) {
-            // Usuario está voltando, carregar configurações salvas
+            // usar voltou, carrega configurações guardadas
             const savedSignatureConfig = localStorage.getItem('signatureConfig');
             if (savedSignatureConfig) {
                 try {
@@ -107,7 +108,6 @@ export default function Step3Details() {
         let centerY = mouseY;
 
         // Limitar a posição do centro considerando as dimensões da marca
-        // O centro não pode estar mais próximo da borda que metade da largura/altura da marca
         const minX = markerWidth / 2;
         const maxX = containerRect.width - markerWidth / 2;
         const minY = markerHeight / 2;
@@ -164,6 +164,7 @@ export default function Step3Details() {
         };
 
         localStorage.setItem('signatureConfig', JSON.stringify(signatureConfig));
+        setAllowedStep(5); // Permitir navegação para o passo 5
         navigate('/step5');
     };
 

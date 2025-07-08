@@ -2,8 +2,8 @@
     transition: color 0.2s ease-in-out;
     background-color: transparent;
     border: none;
-    color: #e63946; /* Red color */
-    font-size: 0.875rem; /* 14px */
+    color: #e63946; 
+    font-size: 0.875rem;
     text-decoration: underline;
     margin: 2rem ;
 }

@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useNavigationGuard } from '../contexts/NavigationGuardContext';
 import './Step5OTP.css';
 
 export default function Step5OTP() {
     const navigate = useNavigate();
+    const { setAllowedStep, resetFlow } = useNavigationGuard();
     const [otpCode, setOtpCode] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
@@ -63,8 +65,6 @@ export default function Step5OTP() {
                 }
             }
 
-            // Dados removidos em produção para segurança
-
             // Chamar o endpoint de validação OTP com todos os dados necessários
             const response = await fetch('http://localhost:8080/api/signature/validate-otp', {
                 method: 'POST',
@@ -94,7 +94,7 @@ export default function Step5OTP() {
                     const base64String = btoa(binaryString);
                     localStorage.setItem('signedPdfBlob', base64String);
 
-                    // Navegar para o Step6 (resultado final)
+                    setAllowedStep(7); // Permitir navegação para o passo 7
                     navigate('/step7');
                 };
                 reader.readAsArrayBuffer(blob);
@@ -132,8 +132,6 @@ export default function Step5OTP() {
                 return;
             }
 
-            // Dados removidos em produção por segurança
-
             const response = await fetch('http://localhost:8080/api/signature/resend-otp', {
                 method: 'POST',
                 headers: {
@@ -168,7 +166,7 @@ export default function Step5OTP() {
     };
 
     const handleBack = () => {
-        navigate('/');
+        resetFlow(); // Reiniciar o fluxo de assinatura
     };
 
     return (

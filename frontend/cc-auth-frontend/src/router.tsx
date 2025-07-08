@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import App from './App';
+import ProtectedApp from './ProtectedApp';
 import Step1Intro from './pages/Step1Intro';
 import Step2EscolhaDocumento from './pages/Step2ChooseDocument';
 import Step3Preview from './pages/Step3Preview';
@@ -11,7 +11,7 @@ import Step6Result from './pages/Step6Result';
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />,
+        element: <ProtectedApp />,
         children: [
             { path: '/',      element: <Step1Intro /> },
             { path: '/step2', element: <Step2EscolhaDocumento /> },

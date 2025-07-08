@@ -63,7 +63,6 @@
     }
 }
 
-/* Button hover effects */
 button:not(:disabled):hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
@@ -73,7 +72,6 @@ button:not(:disabled):active {
     transform: translateY(0);
 }
 
-/* Download button special styling */
 .bg-green-600 {
     background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
 }
@@ -82,7 +80,6 @@ button:not(:disabled):active {
     background: linear-gradient(135deg, #15803d 0%, #166534 100%);
 }
 
-/* Responsive design */
 @media (max-width: 640px) {
     .center-content {
         padding: 0.5rem;
@@ -110,7 +107,6 @@ button:not(:disabled):active {
     }
 }
 
-/* Document info styling */
 .bg-green-50 svg {
     animation: pulse 2s infinite;
 }
@@ -124,7 +120,6 @@ button:not(:disabled):active {
     }
 }
 
-/* Focus styles for accessibility */
 button:focus {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
@@ -135,7 +130,6 @@ button:focus {
     transition: all 0.2s ease-in-out;
 }
 
-/* Success checkmarks animation */
 .bg-green-50 p:has-text("✓") {
     animation: checkmarkSlide 0.3s ease-out;
 }

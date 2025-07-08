@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useNavigationGuard } from '../contexts/NavigationGuardContext';
 import './Step2ChooseDocument.css';
 
 export default function Step2EscolhaDocumento() {
     const navigate = useNavigate();
+    const { setAllowedStep, resetFlow } = useNavigationGuard();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -75,7 +77,6 @@ export default function Step2EscolhaDocumento() {
 
             return result;
         } catch (error) {
-            // Log removido em produção
             throw error;
         } finally {
             setIsUploading(false);
@@ -93,6 +94,7 @@ export default function Step2EscolhaDocumento() {
         if (selectedFile) {
             try {
                 await uploadFileToBackend(selectedFile);
+                setAllowedStep(3); // Permitir navegação para o passo 3
                 navigate('/step3');
             } catch (error) {
             }
@@ -100,7 +102,7 @@ export default function Step2EscolhaDocumento() {
     };
 
     const handleBack = () => {
-        navigate('/');
+        resetFlow(); // Reiniciar o fluxo; volta ao passo 1
     };
 
     const removeFile = () => {

@@ -22,13 +22,11 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Custom styling for OTP input */
 input[type="text"]:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* OTP input styling */
 input[type="text"] {
     font-variant-numeric: tabular-nums;
     border-radius: 0.375rem; 
@@ -47,7 +45,6 @@ input[type="text"] {
     font-family: inherit; 
 }
 
-/* Responsive design */
 @media (max-width: 640px) {
     .center-content {
         padding: 0.5rem;
@@ -62,7 +59,6 @@ input[type="text"] {
     }
 }
 
-/* Animation for messages */
 .bg-red-50,
 .bg-blue-50,
 .bg-green-50 {
@@ -80,7 +76,6 @@ input[type="text"] {
     }
 }
 
-/* Hover effects */
 button:not(:disabled):hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -90,7 +85,6 @@ button:not(:disabled):active {
     transform: translateY(0);
 }
 
-/* Focus styles for accessibility */
 button:focus,
 input:focus {
     outline: 2px solid #3b82f6;
@@ -135,11 +129,11 @@ input:focus {
 }
 
 .button-cancel {
-    background-color: #e5e7eb; /* Gray 200 */
-    color: #ffffff; /* Gray 600 */
+    background-color: #e5e7eb; 
+    color: #ffffff; 
     font-weight: 600;
     padding: 0.5rem 1.5rem;
-    border-radius: 0.375rem; /* Rounded-md */
+    border-radius: 0.375rem; 
     transition: background-color 0.2s ease-in-out;
     background-color: #c1121f;
 }

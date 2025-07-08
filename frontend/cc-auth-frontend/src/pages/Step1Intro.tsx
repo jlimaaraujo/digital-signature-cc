@@ -1,10 +1,13 @@
 import { useNavigate } from 'react-router-dom';
+import { useNavigationGuard } from '../contexts/NavigationGuardContext';
 import './Step1Intro.css';
 
 export default function Step1Intro() {
     const navigate = useNavigate();
+    const { setAllowedStep } = useNavigationGuard();
 
     const handleAdvance = () => {
+        setAllowedStep(2); // Permitir navegação para o passo 2
         navigate('/step2');
     };
 
