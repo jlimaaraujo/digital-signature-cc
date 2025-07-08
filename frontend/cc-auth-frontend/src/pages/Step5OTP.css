@@ -137,3 +137,8 @@ input:focus {
     transition: background-color 0.2s ease-in-out;
     background-color: #c1121f;
 }
+
+.error-message {
+    color: #ef4444;
+    align-items: flex-start;
+}

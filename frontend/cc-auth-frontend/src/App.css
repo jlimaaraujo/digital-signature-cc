@@ -3,6 +3,7 @@
   margin: 0;
   text-align: center;
   width: 100%;
+  min-width: 720px; /* Definir largura mínima para evitar desformatação em telas menores */
 }
 
 .logo {

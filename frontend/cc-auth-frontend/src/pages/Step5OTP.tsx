@@ -180,7 +180,7 @@ export default function Step5OTP() {
                     O processo de assinatura foi iniciado e foi enviado um código OTP por SMS
                     para <b>{phoneNumber}</b> o de telemóvel. Introduza o código recebido para completar a assinatura.
                 </p>
-                
+
                 {/* Informação sobre segurança */}
                 <div className="w-full mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                     <div className="flex items-start">
@@ -213,17 +213,13 @@ export default function Step5OTP() {
                             disabled={isLoading}
                         />
                     </div>
-                </div>
-
-                {/* Mensagem de erro */}
-                {error && (
-                    <div className="w-full mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <div className="flex items-center">
+                    {/* Mensagem de erro */}
+                    {error && (
+                        <div className="error-message w-full mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                             <p className="text-red-700 text-sm">{error}</p>
                         </div>
-                    </div>
-                )}
-
+                    )}
+                </div>
 
                 {/* Botões de ação */}
                 <div className="flex flex-col gap-4 w-full">
