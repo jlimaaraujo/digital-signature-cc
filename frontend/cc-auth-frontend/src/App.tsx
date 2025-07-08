@@ -11,6 +11,7 @@ export default function App() {
     { path: '/step4', label: 'Detalhes da Assinatura' },
     { path: '/step5', label: 'Pedido de Assinatura' },
     { path: '/step6', label: 'Confirmação de Assinatura' },
+    {path: '/step7', label: 'Dowload do Documento' }
   ];
 
   return (
