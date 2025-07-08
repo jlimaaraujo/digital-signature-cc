@@ -19,6 +19,8 @@ export default function Step3Details() {
     const [pageWidth, setPageWidth] = useState<number>(0);
     const [pageHeight, setPageHeight] = useState<number>(0);
     const [scale, setScale] = useState<number>(1);
+    const [motivo, setMotivo] = useState<string>('');
+    const [local, setLocal] = useState<string>('');
     const containerRef = useRef<HTMLDivElement>(null);
     const markerRef = useRef<HTMLDivElement>(null);
 
@@ -160,7 +162,9 @@ export default function Step3Details() {
                 yPercent: signaturePosition.y
             },
             pageWidth,
-            pageHeight
+            pageHeight,
+            motivo: motivo || '', // Valor padrão se não preenchido
+            local: local || ''   // Valor padrão se não preenchido
         };
 
         localStorage.setItem('signatureConfig', JSON.stringify(signatureConfig));
@@ -264,6 +268,21 @@ export default function Step3Details() {
                             </div>
                         )}
                     </div>
+                    {/* Botões de navegação */}
+                    <div className="button-group flex gap-4 mt-8 justify-center">
+                        <button
+                            onClick={handleBack}
+                            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-md transition-colors duration-200"
+                        >
+                            VOLTAR
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md transition-colors duration-200"
+                        >
+                            SUBMETER
+                        </button>
+                    </div>
                 </div>
 
                 {/* Configuração e informação à direita */}
@@ -309,6 +328,32 @@ export default function Step3Details() {
                                     </select>
                                 </div>
                             )}
+
+                            {/* Inputs para Motivo e Local */}
+                            <div className="flex flex-col space-y-4">
+                                <div>
+                                    <label htmlFor="motivo" className="block text-gray-700 font-medium"><b>Motivo:</b></label>
+                                    <input
+                                        type="text"
+                                        id="motivo"
+                                        value={motivo}
+                                        onChange={(e) => setMotivo(e.target.value)}
+                                        placeholder="Motivo (opcional)"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="local" className="block text-gray-700 font-medium"><b>Local:</b></label>
+                                    <input
+                                        type="text"
+                                        id="local"
+                                        value={local}
+                                        onChange={(e) => setLocal(e.target.value)}
+                                        placeholder="Local (opcional)"
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -329,22 +374,6 @@ export default function Step3Details() {
                                 </p>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Botões de navegação */}
-                    <div className="button-group flex gap-4 mt-8 justify-center">
-                        <button
-                            onClick={handleBack}
-                            className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-8 rounded-md transition-colors duration-200"
-                        >
-                            VOLTAR
-                        </button>
-                        <button
-                            onClick={handleSubmit}
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md transition-colors duration-200"
-                        >
-                            SUBMETER
-                        </button>
                     </div>
                 </div>
             </div>

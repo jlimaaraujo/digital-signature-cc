@@ -87,6 +87,8 @@ select:focus {
 /* Slide-in animation for configuration panel */
 .config-panel {
     animation: slideIn 0.3s ease-out;
+    height: auto; /* Ajusta a altura para ser menor */
+    padding: 1rem; /* Mantém o espaçamento interno */
 }
 
 @keyframes slideIn {
@@ -289,4 +291,24 @@ select {
     color: #000;
     font-size: 0.875rem;
     margin-right: 0.5rem;
+}
+
+/* Adjust alignment for inputs */
+.flex.flex-col.space-y-4 {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left !important;
+}
+
+/* Align labels to the left */
+label {
+    text-align: left;
+    display: block;
+    margin-bottom: 0.5rem;
 }

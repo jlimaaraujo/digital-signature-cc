@@ -37,12 +37,16 @@ export default function Step4Signature() {
                 localStorage.setItem('signaturePage', JSON.stringify(signatureConfig.page || 1));
                 localStorage.setItem('signatureXPercent', JSON.stringify(signatureConfig.position?.xPercent || 50));
                 localStorage.setItem('signatureYPercent', JSON.stringify(signatureConfig.position?.yPercent || 50));
+                localStorage.setItem('signatureMotivo', JSON.stringify(signatureConfig.motivo || ''));
+                localStorage.setItem('signatureLocal', JSON.stringify(signatureConfig.local || ''));
             } catch (error) {
                 // Se não conseguir fazer parse, usar valores padrão
                 localStorage.setItem('hasVisualSignature', JSON.stringify(false));
                 localStorage.setItem('signaturePage', JSON.stringify(1));
                 localStorage.setItem('signatureXPercent', JSON.stringify(50));
                 localStorage.setItem('signatureYPercent', JSON.stringify(50));
+                localStorage.setItem('signatureMotivo', JSON.stringify(''));
+                localStorage.setItem('signatureLocal', JSON.stringify(''));
             }
         } else {
             // Se não houver configuração salva, usar valores padrão
@@ -50,6 +54,8 @@ export default function Step4Signature() {
             localStorage.setItem('signaturePage', JSON.stringify(1));
             localStorage.setItem('signatureXPercent', JSON.stringify(50));
             localStorage.setItem('signatureYPercent', JSON.stringify(50));
+            localStorage.setItem('signatureMotivo', JSON.stringify(''));
+            localStorage.setItem('signatureLocal', JSON.stringify(''));
         }
     }, []);
 
