@@ -14,7 +14,7 @@ public class SoapClientService {
 
     private static final Dotenv dotenv = Dotenv.load();
     private static final String WSDL_URL = dotenv.get("WSDL_URL");
-    private static final String USERNAME = dotenv.get("USERNAME");
+    private static final String USERNAME = dotenv.get("USERNAME_");
     private static final String PASSWORD = dotenv.get("PASSWORD");
 
     private static SCMDService port;
