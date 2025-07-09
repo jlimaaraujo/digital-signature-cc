@@ -37,16 +37,22 @@ export default function Step4Signature() {
                 localStorage.setItem('signaturePage', JSON.stringify(signatureConfig.page || 1));
                 localStorage.setItem('signatureXPercent', JSON.stringify(signatureConfig.position?.xPercent || 50));
                 localStorage.setItem('signatureYPercent', JSON.stringify(signatureConfig.position?.yPercent || 50));
-                localStorage.setItem('signatureMotivo', JSON.stringify(signatureConfig.motivo || ''));
-                localStorage.setItem('signatureLocal', JSON.stringify(signatureConfig.local || ''));
+
+                // Tratar motivo e local corretamente - só salvar se existirem e não forem vazios
+                const motivo = signatureConfig.motivo && signatureConfig.motivo.trim() ? signatureConfig.motivo.trim() : null;
+                const local = signatureConfig.local && signatureConfig.local.trim() ? signatureConfig.local.trim() : null;
+
+                localStorage.setItem('signatureMotivo', JSON.stringify(motivo));
+                localStorage.setItem('signatureLocal', JSON.stringify(local));
+
             } catch (error) {
                 // Se não conseguir fazer parse, usar valores padrão
                 localStorage.setItem('hasVisualSignature', JSON.stringify(false));
                 localStorage.setItem('signaturePage', JSON.stringify(1));
                 localStorage.setItem('signatureXPercent', JSON.stringify(50));
                 localStorage.setItem('signatureYPercent', JSON.stringify(50));
-                localStorage.setItem('signatureMotivo', JSON.stringify(''));
-                localStorage.setItem('signatureLocal', JSON.stringify(''));
+                localStorage.setItem('signatureMotivo', JSON.stringify(null));
+                localStorage.setItem('signatureLocal', JSON.stringify(null));
             }
         } else {
             // Se não houver configuração salva, usar valores padrão
@@ -54,8 +60,8 @@ export default function Step4Signature() {
             localStorage.setItem('signaturePage', JSON.stringify(1));
             localStorage.setItem('signatureXPercent', JSON.stringify(50));
             localStorage.setItem('signatureYPercent', JSON.stringify(50));
-            localStorage.setItem('signatureMotivo', JSON.stringify(''));
-            localStorage.setItem('signatureLocal', JSON.stringify(''));
+            localStorage.setItem('signatureMotivo', JSON.stringify(null));
+            localStorage.setItem('signatureLocal', JSON.stringify(null));
         }
     }, []);
 
@@ -71,7 +77,7 @@ export default function Step4Signature() {
 
         // Remove espaços para validar apenas os dígitos
         const phoneDigits = phoneNumber.replace(/\s/g, '');
-        const formattedPhone = "+351" + phoneDigits; 
+        const formattedPhone = "+351" + phoneDigits;
         if (phoneDigits.length !== 9) {
             setError('O número de telemóvel deve ter 9 dígitos');
             return;
@@ -89,7 +95,7 @@ export default function Step4Signature() {
             // Guardar dados no localStorage para uso posterior
             localStorage.setItem('phoneNumber', phoneDigits);
             localStorage.setItem('userPin', pin);
-            
+
             // Recuperar a configuração de assinatura completa
             const signatureConfigData = localStorage.getItem('signatureConfig');
             let hasVisualSignature = false;
@@ -127,7 +133,7 @@ export default function Step4Signature() {
             // 2. Chamar endpoint para assinar documento
             const documentInfo = localStorage.getItem('documentInfo');
             let docName = 'Contrato Teste';
-            
+
             if (documentInfo) {
                 try {
                     const parsedData = JSON.parse(documentInfo);
@@ -160,12 +166,12 @@ export default function Step4Signature() {
                 }
                 throw new Error(errorMessage);
             }
-            
+
             // Guardar o processId retornado para uso posterior
             const processId = await signResponse.text();
             localStorage.setItem('processId', processId);
             // Log removido em produção
-            
+
             setAllowedStep(6); // Permitir navegação para o passo 6
             navigate('/step6');
         } catch (error) {
@@ -183,10 +189,10 @@ export default function Step4Signature() {
     const formatPhoneNumber = (value: string) => {
         // Remove tudo que não for dígito
         const digits = value.replace(/\D/g, '');
-        
+
         // Limita a 9 dígitos
         const limitedDigits = digits.slice(0, 9);
-        
+
         // Formata como XXX XXX XXX
         if (limitedDigits.length <= 3) {
             return limitedDigits;
@@ -241,7 +247,7 @@ export default function Step4Signature() {
                             onChange={handlePhoneChange}
                             placeholder="9XX XXX XXX"
                             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
-                            style={{width: '180px'}}
+                            style={{ width: '180px' }}
                             disabled={isLoading}
                         />
                     </div>
@@ -263,7 +269,7 @@ export default function Step4Signature() {
                                 placeholder="••••••"
                                 maxLength={6}
                                 className="px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg text-center tracking-widest"
-                                style={{width: '180px'}}
+                                style={{ width: '180px' }}
                                 disabled={isLoading}
                             />
                             <button
@@ -290,7 +296,7 @@ export default function Step4Signature() {
                     <div className="flex items-start">
                         <div>
                             <p className="text-blue-700 text-xs leading-relaxed">
-                                Após clicar em "Assinar Documento", será enviado um código OTP por SMS 
+                                Após clicar em "Assinar Documento", será enviado um código OTP por SMS
                                 para o seu número de telemóvel para validar a assinatura.
                             </p>
                         </div>

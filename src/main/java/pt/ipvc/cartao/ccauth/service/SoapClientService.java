@@ -59,7 +59,20 @@ public class SoapClientService {
     }
 
     public static SignResult validateOtp(String encryptedOtp, String processId, byte[] applicationId) {
+        System.out.println("[SOAP Client] Encrypted OTP: " + encryptedOtp);
+        System.out.println("[SOAP Client] Process ID: " + processId);
+        System.out.println("[SOAP Client] Application ID: " + (applicationId != null ? applicationId.length : "null"));
+
         SignResponse response = port.validateOtp(encryptedOtp, processId, applicationId, false);
+
+        if (response == null) {
+            System.out.println("[SOAP Client] Response is null");
+            throw new IllegalArgumentException("Response is null");
+        }
+
+        if (response.getSignature() == null) {
+            throw new IllegalArgumentException("Signature is null");
+        }
 
         String assinaturaBase64 = Base64.getEncoder().encodeToString(response.getSignature());
         String certBase64 = response.getCertificate();

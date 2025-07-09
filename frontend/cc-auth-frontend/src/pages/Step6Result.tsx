@@ -1,15 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Step6Result.css';
 
 export default function Step6Result() {
     const navigate = useNavigate();
     const [setDocumentInfo] = useState<any>(null);
-    const [isSuccess] = useState<boolean>(true); // Em produção, isso viria do resultado da assinatura
+    const [isSuccess] = useState<boolean>(true); 
+    const downloadStartedRef = useRef(false);
 
     const handleDownload = async () => {
+        console.log('handleDownload chamado'); // Debug
         try {
-            // Recuperar o PDF assinado do localStorage
             const signedPdfBase64 = localStorage.getItem('signedPdfBlob');
             const documentInfo = localStorage.getItem('documentInfo');
 
@@ -18,7 +19,6 @@ export default function Step6Result() {
                 return;
             }
 
-            // Converter base64 para blob
             const binaryString = atob(signedPdfBase64);
             const bytes = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) {
@@ -26,25 +26,20 @@ export default function Step6Result() {
             }
             const blob = new Blob([bytes], { type: 'application/pdf' });
 
-            // Criar URL temporário para download
             const url = window.URL.createObjectURL(blob);
 
-            // Criar elemento de link temporário para download
             const link = document.createElement('a');
             link.href = url;
 
-            // Definir nome do arquivo
-            const fileName = documentInfo ?
-                JSON.parse(documentInfo).name.replace('.pdf', '_assinado.pdf') :
-                'documento_assinado.pdf';
+            const fileName = documentInfo
+                ? JSON.parse(documentInfo).name.replace('.pdf', '_assinado.pdf')
+                : 'documento_assinado.pdf';
 
             link.download = fileName;
 
-            // Executar download
             document.body.appendChild(link);
             link.click();
 
-            // Limpar
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
         } catch (error) {
@@ -53,7 +48,6 @@ export default function Step6Result() {
     };
 
     const handleClose = () => {
-        // Limpar dados e fechar aplicação ou voltar ao início
         localStorage.removeItem('documentInfo');
         localStorage.removeItem('documentHash');
         localStorage.removeItem('signedPdfBlob');
@@ -63,30 +57,31 @@ export default function Step6Result() {
     };
 
     useEffect(() => {
-        // Recuperar informações do documento do localStorage
         const documentData = localStorage.getItem('documentInfo');
         if (documentData) {
             try {
                 const parsedData = JSON.parse(documentData);
                 setDocumentInfo(parsedData);
             } catch (error) {
-                // Se não conseguir fazer parse, ignorar erro
+                // Ignorar erro de parse
             }
         }
 
-        // Se a assinatura foi bem-sucedida, iniciar download automaticamente
-        if (isSuccess) {
+        // ✅ Garantir que o download só ocorre uma vez
+        if (isSuccess && !downloadStartedRef.current) {
+            downloadStartedRef.current = true;
+            console.log('Iniciando download automático');
             handleDownload();
         }
-    }, []);
+    }, [isSuccess]);
 
     return (
         <div className="center-content">
             <div className="rounded-lg shadow-md p-12 max-w-2xl flex flex-col items-center text-center">
                 {isSuccess ? (
                     <>
-                        {/* Ícone de sucesso */}
                         <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8">
+                            {/* Ícone de sucesso (adiciona SVG ou imagem aqui se quiseres) */}
                         </div>
 
                         <h2 className="text-2xl font-bold text-green-600 mb-4">
@@ -97,7 +92,6 @@ export default function Step6Result() {
                             O seu documento foi assinado digitalmente com a Chave Móvel Digital. O download iniciou automaticamente.
                         </p>
 
-                        {/* Botões de ação */}
                         <div className="flex flex-col gap-4 w-full">
                             <button
                                 onClick={handleDownload}
@@ -116,8 +110,8 @@ export default function Step6Result() {
                     </>
                 ) : (
                     <>
-                        {/* Ícone de erro */}
                         <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mb-8">
+                            {/* Ícone de erro (adiciona SVG ou imagem aqui se quiseres) */}
                         </div>
 
                         <h2 className="text-2xl font-bold text-red-600 mb-4">
@@ -128,7 +122,6 @@ export default function Step6Result() {
                             Ocorreu um erro durante o processo de assinatura digital. Por favor, tente novamente.
                         </p>
 
-                        {/* Botões para erro */}
                         <div className="flex gap-4">
                             <button
                                 onClick={() => navigate('/step4')}

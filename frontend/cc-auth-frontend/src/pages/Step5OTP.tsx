@@ -53,6 +53,42 @@ export default function Step5OTP() {
             const xPercent = signatureXPercent ? JSON.parse(signatureXPercent) : 50;
             const yPercent = signatureYPercent ? JSON.parse(signatureYPercent) : 50;
 
+            // CORREÇÃO CRÍTICA: Recuperar motivo e local corretamente
+            const motivoSalvo = localStorage.getItem('signatureMotivo');
+            const localSalvo = localStorage.getItem('signatureLocal');
+            
+            // Parse dos valores salvos - podem ser null, string vazia ou valor real
+            let motivo = null;
+            let local = null;
+            
+            if (motivoSalvo && motivoSalvo !== 'null') {
+                try {
+                    const parsed = JSON.parse(motivoSalvo);
+                    if (parsed && typeof parsed === 'string' && parsed.trim() !== '') {
+                        motivo = parsed.trim();
+                    }
+                } catch (e) {
+                    // Se não conseguir fazer parse, usar como string direta
+                    if (motivoSalvo.trim() !== '' && motivoSalvo !== 'null') {
+                        motivo = motivoSalvo.trim();
+                    }
+                }
+            }
+            
+            if (localSalvo && localSalvo !== 'null') {
+                try {
+                    const parsed = JSON.parse(localSalvo);
+                    if (parsed && typeof parsed === 'string' && parsed.trim() !== '') {
+                        local = parsed.trim();
+                    }
+                } catch (e) {
+                    // Se não conseguir fazer parse, usar como string direta
+                    if (localSalvo.trim() !== '' && localSalvo !== 'null') {
+                        local = localSalvo.trim();
+                    }
+                }
+            }
+
             // Recuperar nome do documento
             const documentInfo = localStorage.getItem('documentInfo');
             let documentName = 'Documento';
@@ -65,20 +101,25 @@ export default function Step5OTP() {
                 }
             }
 
+            // Preparar payload para o backend - INCLUINDO MOTIVO E LOCAL
+            const otpPayload = {
+                otp: otpCode,
+                documentName: documentName,
+                hasVisualSignature: showVisual,
+                signaturePage: page,
+                signatureXPercent: xPercent,
+                signatureYPercent: yPercent,
+                motivo: motivo,  // ADICIONADO
+                local: local     // ADICIONADO
+            };
+
             // Chamar o endpoint de validação OTP com todos os dados necessários
             const response = await fetch('http://localhost:8080/api/signature/validate-otp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    otp: otpCode,
-                    documentName: documentName,
-                    hasVisualSignature: showVisual,
-                    signaturePage: page,
-                    signatureXPercent: xPercent,
-                    signatureYPercent: yPercent
-                }),
+                body: JSON.stringify(otpPayload),
             });
 
             if (response.ok) {

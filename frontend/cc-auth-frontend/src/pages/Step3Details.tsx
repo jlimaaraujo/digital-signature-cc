@@ -82,7 +82,7 @@ export default function Step3Details() {
             const containerHeight = Math.min(window.innerHeight * 0.6, 500);
             const widthScale = containerWidth / width;
             const heightScale = containerHeight / height;
-            setScale(Math.min(widthScale, heightScale, 1)); 
+            setScale(Math.min(widthScale, heightScale, 1));
         }
     };
 
@@ -153,29 +153,34 @@ export default function Step3Details() {
     };
 
     const handleSubmit = () => {
-        // Guardar todas as opções no localStorage incluindo posição exacta
-        const signatureConfig = {
-            showVisualSignature,
-            page: selectedPage,
-            position: {
-                xPercent: signaturePosition.x,
-                yPercent: signaturePosition.y
-            },
-            pageWidth,
-            pageHeight,
-            motivo: motivo || '', // Valor padrão se não preenchido
-            local: local || ''   // Valor padrão se não preenchido
-        };
-
-        localStorage.setItem('signatureConfig', JSON.stringify(signatureConfig));
-        setAllowedStep(5); // Permitir navegação para o passo 5
-        navigate('/step5');
+    // Processar motivo e local - só salvar se não estiver vazio
+    const motivoProcessado = motivo.trim();
+    const localProcessado = local.trim();
+    
+    // Guardar todas as opções no localStorage incluindo posição exacta
+    const signatureConfig = {
+        showVisualSignature,
+        page: selectedPage,
+        position: {
+            xPercent: signaturePosition.x,
+            yPercent: signaturePosition.y
+        },
+        pageWidth,
+        pageHeight,
+        // Só incluir motivo e local se não estiverem vazios
+        ...(motivoProcessado && { motivo: motivoProcessado }),
+        ...(localProcessado && { local: localProcessado })
     };
+
+    localStorage.setItem('signatureConfig', JSON.stringify(signatureConfig));
+    setAllowedStep(5); // Permitir navegação para o passo 5
+    navigate('/step5');
+};
 
     return (
         <div className="min-h-screen bg-gray-100 py-4">
             <h2 className="text-2xl font-bold text-blue-600 mb-8">
-                        Detalhes da Assinatura
+                Detalhes da Assinatura
             </h2>
             {/* Main Content - layout lado a lado */}
             <div className="signature-details-layout bg-white rounded-lg shadow-lg p-8">
@@ -217,8 +222,8 @@ export default function Step3Details() {
                                             <p className="text-sm text-gray-600 text-center">
                                                 Verifique se o documento foi carregado corretamente
                                             </p>
-                                            <button 
-                                                onClick={() => window.location.reload()} 
+                                            <button
+                                                onClick={() => window.location.reload()}
                                                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                                             >
                                                 Recarregar página
@@ -258,8 +263,8 @@ export default function Step3Details() {
                                     {documentInfo ? 'A carregar documento...' : 'Nenhum documento encontrado'}
                                 </p>
                                 {!documentInfo && (
-                                    <button 
-                                        onClick={() => navigate('/step3')} 
+                                    <button
+                                        onClick={() => navigate('/step3')}
                                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                                     >
                                         Voltar para selecionar documento
@@ -295,7 +300,7 @@ export default function Step3Details() {
                             checked={showVisualSignature}
                             onChange={(e) => setShowVisualSignature(e.target.checked)}
                             className="mt-1 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
+                        />
                         <label htmlFor="visualSignature" className="text-gray-700 text-base leading-relaxed cursor-pointer">
                             Deseja que a assinatura esteja visível no documento?
                         </label>
@@ -312,7 +317,7 @@ export default function Step3Details() {
                             {numPages > 1 && (
                                 <div className="flex items-center space-x-3">
                                     <label htmlFor="pageSelect" className="page-pabel text-gray-700 font-medium">
-                                        <b>Página:</b> 
+                                        <b>Página:</b>
                                     </label>
                                     <select
                                         id="pageSelect"
