@@ -308,7 +308,7 @@ export default function Step3Details() {
 
                     {/* Configurações quando checkbox está marcada */}
                     {showVisualSignature && (
-                        <div className="config-panel space-y-4 bg-gray-50 p-4 rounded-lg">
+                        <div className="config-panel space-y-2 bg-gray-50 p-4 rounded-lg">
                             <h3 className="text-lg font-semibold text-gray-800">Configurar posição da assinatura:</h3>
                             <p className="text-sm text-gray-600">
                                 Arraste a marca azul para posicionar a assinatura
@@ -317,7 +317,7 @@ export default function Step3Details() {
                             {numPages > 1 && (
                                 <div className="flex items-center space-x-3">
                                     <label htmlFor="pageSelect" className="page-pabel text-gray-700 font-medium">
-                                        <b>Página:</b>
+                                        Página:
                                     </label>
                                     <select
                                         id="pageSelect"
