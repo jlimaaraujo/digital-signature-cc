@@ -37,7 +37,7 @@ input[type="text"] {
     border: 1px solid #d1d5db; 
     transition: border-color 0.2s ease-in-out;
     font-size: 1rem;
-    text-align: center;  
+    text-align: center !important;  
     letter-spacing: 0.1em;
     height: 3rem; 
     box-sizing: border-box; 

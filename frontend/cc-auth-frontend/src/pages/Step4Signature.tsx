@@ -109,28 +109,7 @@ export default function Step4Signature() {
             }
             localStorage.setItem('hasVisualSignature', JSON.stringify(hasVisualSignature));
 
-            // 1. Chamar endpoint para obter certificado
-            const certResponse = await fetch('http://localhost:8080/api/signature/get-certificate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formattedPhone),
-            });
-
-            if (!certResponse.ok) {
-                let errorMessage = 'Erro ao obter certificado';
-                try {
-                    const certError = await certResponse.json();
-                    errorMessage = certError.message || errorMessage;
-                } catch (jsonError) {
-                    // Usar mensagem genérica em caso de erro
-                    errorMessage = 'Erro ao obter certificado';
-                }
-                throw new Error(errorMessage);
-            }
-
-            // 2. Chamar endpoint para assinar documento
+            // Chamar endpoint para assinar documento
             const documentInfo = localStorage.getItem('documentInfo');
             let docName = 'Contrato Teste';
 

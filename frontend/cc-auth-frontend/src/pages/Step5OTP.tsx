@@ -219,7 +219,7 @@ export default function Step5OTP() {
 
                 <p className="text-gray-700 mb-8 text-lg leading-relaxed text-center">
                     O processo de assinatura foi iniciado e foi enviado um código OTP por SMS
-                    para <b>{phoneNumber}</b> o de telemóvel. Introduza o código recebido para completar a assinatura.
+                    para <b>{phoneNumber}</b>. Introduza o código recebido para completar a assinatura.
                 </p>
 
                 {/* Informação sobre segurança */}

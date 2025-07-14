@@ -1,8 +1,6 @@
 package pt.ipvc.cartao.ccauth.service;
 
 import com.itextpdf.kernel.pdf.*;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.signatures.*;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -17,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
@@ -45,14 +42,14 @@ public class SignatureService {
         return this.lastHash;
     }
 
-    public String getCertificate(String phoneNumber) {
+    /*public String getCertificate(String phoneNumber) {
         String encryptedPhone = CryptoUtils.encrypt(phoneNumber, CERT_PATH);
         String cert = SoapClientService.getCertificate(APPLICATION_ID.getBytes(), encryptedPhone);
 
         this.lastCertificate = cert;
 
         return cert;
-    }
+    }*/
 
     public String startSigning(SignRequest request) {
         String encryptedPhone = CryptoUtils.encrypt(request.getPhoneNumber(), CERT_PATH);
@@ -89,12 +86,12 @@ public class SignatureService {
                 return null;
             }
 
-            if (result == null || result.getAssinaturaBase64() == null) {
+            if (result == null || result.getSignatureBase64() == null) {
                 System.err.println("Resultado da assinatura inválido");
                 return null;
             }
 
-            byte[] decodedSignature = Base64.getDecoder().decode(result.getAssinaturaBase64());
+            byte[] decodedSignature = Base64.getDecoder().decode(result.getSignatureBase64());
             //System.out.println("Assinatura decodificada, tamanho: " + decodedSignature.length + " bytes");
 
             // Verificar se temos o PDF original
@@ -172,12 +169,11 @@ public class SignatureService {
                 return null;
             }
 
-            Certificate[] chain = new Certificate[]{cert};
+            //Certificate[] chain = new Certificate[]{cert};
 
             // Preparar PDF
             PdfReader reader = new PdfReader(new ByteArrayInputStream(pdfData));
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
             PdfSigner signer = new PdfSigner(reader, outputStream, new StampingProperties());
 
             // Configurar aparência da assinatura
@@ -276,7 +272,7 @@ public class SignatureService {
             IExternalSignatureContainer container = new IExternalSignatureContainer() {
                 @Override
                 public byte[] sign(InputStream data) throws GeneralSecurityException {
-                    return signature;
+                    return signature; // assinatura digital
                 }
 
                 @Override
@@ -290,7 +286,7 @@ public class SignatureService {
             signer.signExternalContainer(container, 8192);
 
             byte[] result = outputStream.toByteArray();
-            System.out.println("Assinatura única criada com sucesso!");
+
             return result;
 
         } catch (Exception e) {
@@ -521,7 +517,6 @@ public class SignatureService {
 
             // Extrair dados do Subject DN
             String subjectDN = cert.getSubjectX500Principal().getName();
-            System.out.println("Subject DN completo: " + subjectDN);
 
             // Extrair campos usando o parsing nativo
             String nome = getFieldFromX500Principal(subject, "CN");
@@ -539,9 +534,6 @@ public class SignatureService {
             if (ccNumber == null || ccNumber.trim().isEmpty()) {
                 ccNumber = "—";
             }
-
-            System.out.println("Nome extraído: " + nome);
-            System.out.println("CC extraído: " + ccNumber);
 
             return new String[]{nome, ccNumber};
 
@@ -647,15 +639,11 @@ public class SignatureService {
     }
 
         public pt.ipvc.cartao.ccauth.soap.SignStatus forceSms(String processId, String citizenId) {
-            System.out.println("ForceSMS called with processId: " + processId + ", citizenId: " + citizenId);
-            
+
             // citizenId deve ser encriptado antes de enviar
             String encryptedCitizenId = CryptoUtils.encrypt(citizenId, CERT_PATH);
-            System.out.println("Encrypted citizenId length: " + (encryptedCitizenId != null ? encryptedCitizenId.length() : "null"));
-            
             pt.ipvc.cartao.ccauth.soap.SignStatus result = SoapClientService.forceSms(processId, encryptedCitizenId, APPLICATION_ID.getBytes());
-            System.out.println("ForceSMS result: " + (result != null ? "Success" : "Failed"));
-            
+
             return result;
         }
     }

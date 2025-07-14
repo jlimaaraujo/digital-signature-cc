@@ -28,10 +28,10 @@ public class SignatureController {
         return signatureService.generateHash(pdfContent);
     }
 
-    @PostMapping("/get-certificate")
-    public String getCertificate(@RequestBody String phoneNumber) {
-        return signatureService.getCertificate(phoneNumber);
-    }
+//    @PostMapping("/get-certificate")
+//    public String getCertificate(@RequestBody String phoneNumber) {
+//        return signatureService.getCertificate(phoneNumber);
+//    }
 
     @PostMapping("/sign")
     public ResponseEntity<String> startSigning(@RequestBody SignRequest request) {

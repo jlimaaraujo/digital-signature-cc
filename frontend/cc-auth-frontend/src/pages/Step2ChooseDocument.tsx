@@ -18,7 +18,7 @@ export default function Step2EscolhaDocumento() {
 
         // Verificar tamanho (3MB = 3 * 1024 * 1024 bytes)
         if (file.size > 3 * 1024 * 1024) {
-            alert('O arquivo deve ter no máximo 3MB.');
+            alert('O documento deve ter no máximo 3MB.');
             return;
         }
 

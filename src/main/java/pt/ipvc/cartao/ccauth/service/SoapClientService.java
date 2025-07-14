@@ -2,11 +2,9 @@ package pt.ipvc.cartao.ccauth.service;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-import javax.xml.bind.JAXBElement;
 import pt.ipvc.cartao.ccauth.model.SignResult;
 import pt.ipvc.cartao.ccauth.soap.*;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import java.util.Base64;
 
@@ -18,10 +16,6 @@ public class SoapClientService {
     private static final String PASSWORD = dotenv.get("PASSWORD");
 
     private static SCMDService port;
-
-    public static SCMDService getPort() {
-        return port;
-    }
 
     static {
         try {
@@ -59,14 +53,10 @@ public class SoapClientService {
     }
 
     public static SignResult validateOtp(String encryptedOtp, String processId, byte[] applicationId) {
-        System.out.println("[SOAP Client] Encrypted OTP: " + encryptedOtp);
-        System.out.println("[SOAP Client] Process ID: " + processId);
-        System.out.println("[SOAP Client] Application ID: " + (applicationId != null ? applicationId.length : "null"));
 
         SignResponse response = port.validateOtp(encryptedOtp, processId, applicationId, false);
 
         if (response == null) {
-            System.out.println("[SOAP Client] Response is null");
             throw new IllegalArgumentException("Response is null");
         }
 
