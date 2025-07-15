@@ -319,7 +319,6 @@ public class SignatureService {
             IExternalSignatureContainer container = new IExternalSignatureContainer() {
                 @Override
                 public byte[] sign(InputStream data) throws GeneralSecurityException {
-                    System.out.println("Aplicando assinatura CMD de " + signature.length + " bytes");
                     return signature;
                 }
 
@@ -327,7 +326,6 @@ public class SignatureService {
                 public void modifySigningDictionary(PdfDictionary signDic) {
                     signDic.put(PdfName.Filter, PdfName.Adobe_PPKLite);
                     signDic.put(PdfName.SubFilter, PdfName.Adbe_pkcs7_detached);
-                    System.out.println("Dicionário de assinatura configurado");
                 }
             };
 

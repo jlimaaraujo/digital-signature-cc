@@ -264,6 +264,21 @@ export default function Step5OTP() {
 
                 {/* Botões de ação */}
                 <div className="flex flex-col gap-4 w-full">
+                    {/* Botão cancelar */}
+                    <button
+                        onClick={handleBack}
+                        className="button-cancel bg-gray-200 hover:bg-gray-300 text-gray-600 font-semibold py-2 px-6 rounded-md transition-colors duration-200"
+                    >
+                        CANCELAR
+                    </button>
+                    {/* Botão para reenviar código */}
+                    <button
+                        onClick={handleResendCode}
+                        disabled={isLoading}
+                        className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-6 rounded-md transition-colors duration-200 disabled:opacity-50"
+                    >
+                        REENVIAR CÓDIGO
+                    </button>
                     <button
                         onClick={handleValidate}
                         disabled={isLoading || !otpCode}
@@ -279,22 +294,7 @@ export default function Step5OTP() {
                         )}
                     </button>
 
-                    {/* Botão para reenviar código */}
-                    <button
-                        onClick={handleResendCode}
-                        disabled={isLoading}
-                        className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-6 rounded-md transition-colors duration-200 disabled:opacity-50"
-                    >
-                        REENVIAR CÓDIGO
-                    </button>
 
-                    {/* Botão cancelar */}
-                    <button
-                        onClick={handleBack}
-                        className="button-cancel bg-gray-200 hover:bg-gray-300 text-gray-600 font-semibold py-2 px-6 rounded-md transition-colors duration-200"
-                    >
-                        CANCELAR
-                    </button>
                 </div>
             </div>
         </div>
