@@ -433,7 +433,7 @@ public class SignatureService {
 
             // Verificar assinaturas digitais
             for (String signatureName : signatureNames) {
-                System.out.println("\n--- Verificando assinatura: " + signatureName + " ---");
+                System.out.println("\n--- Verificar assinatura: " + signatureName + " ---");
 
                 try {
                     // Verificar se a assinatura cobre todo o documento
@@ -512,9 +512,6 @@ public class SignatureService {
 
             // Usar o parsing X.509 nativo em vez de regex no DN string
             javax.security.auth.x500.X500Principal subject = cert.getSubjectX500Principal();
-
-            // Extrair dados do Subject DN
-            String subjectDN = cert.getSubjectX500Principal().getName();
 
             // Extrair campos usando o parsing nativo
             String nome = getFieldFromX500Principal(subject, "CN");
